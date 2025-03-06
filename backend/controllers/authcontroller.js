@@ -6,10 +6,10 @@ const TokenHandler = require("../utilities/tokengenerator");
 
 const register = async (req, res) => {
     try {
-        const { username, password, role } = req.body;
+        const { username, useremail, password, role } = req.body;
 
         // Check if the user already exists
-        const existingUser = await User.findOne({ username });
+        const existingUser = await User.findOne({ useremail });
         if (existingUser) {
             return APIResponse.error(res, {
                 status: 400,
@@ -19,13 +19,13 @@ const register = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, password: hashedPassword, role });
+        const newUser = new User({ username, useremail, password: hashedPassword, role });
         await newUser.save();
 
         return APIResponse.success(res, {
             status: 201,
             message: Messages.USER.SIGNUP_SUCCESS,
-            data: { username }
+            data: { username, useremail, hashedPassword,role }
         });
     } catch (err) {
         console.error("Registration error:", err);
@@ -36,11 +36,10 @@ const register = async (req, res) => {
         });
     }
 };
-
 const login = async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { useremail, password } = req.body;
+        const user = await User.findOne({ useremail });
         if (!user) {
             return APIResponse.error(res, {
                 status: 404,
@@ -58,13 +57,13 @@ const login = async (req, res) => {
             });
         }
 
-        // Use TokenHandler to generate token
+        // Generate JWT Token
         const token = TokenHandler.generateToken(user);
 
         return APIResponse.success(res, {
             status: 200,
             message: Messages.USER.LOGIN_SUCCESS,
-            data: { token }
+            data: { token, username: user.username }
         });
     } catch (err) {
         console.error("Login error:", err);
@@ -75,5 +74,5 @@ const login = async (req, res) => {
         });
     }
 };
-
 module.exports = { register, login };
+

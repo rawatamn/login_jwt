@@ -4,33 +4,33 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const movieRoutes = require("./routes/moviesRoutes");
 const User = require("./models/user"); 
 const bcrypt = require("bcryptjs");
+
 const app = express();
-connectDB().then(()=>{
-  createSuperadmin()
-})
 
-
-// ✅ Correct CORS Configuration
-// app.use(cors({
-//   origin: ["http://localhost:3000"], // Allow requests from frontend
-//   methods: ["GET", "POST", "PUT", "DELETE"], // ✅ Fixed methods array
-//   credentials: true,
-// }));
+// ✅ Enable CORS before routes
+app.use(cors({
+  origin: "http://localhost:5173",  
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization"
+}));
 
 // ✅ JSON Middleware
 app.use(express.json());
-app.use(cors())
-// ✅ Simple test route
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
 
 // ✅ Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-//creating super admin
+app.use("/api/movies", movieRoutes); // ✅ Keep routes after CORS
+
+// ✅ Test Route
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
+// ✅ Creating Superadmin
 async function createSuperadmin() {
   try {
     const superadminstate = await User.findOne({ role: "superadmin" });
@@ -40,7 +40,7 @@ async function createSuperadmin() {
 
       const superadmin = new User({
         username: "Aman",
-        useremail: "rawat1234.com", // ✅ Fix: Use 'useremail' instead of 'email'
+        useremail: "rawat1234@gmail.com", // ✅ Valid email format
         password: hashedPassword,
         role: "superadmin"
       });
@@ -55,9 +55,12 @@ async function createSuperadmin() {
   }
 }
 
+// ✅ Connect DB & Start Server
+connectDB().then(() => {
+  createSuperadmin();
 
-// ✅ Correct Port (Ensure it Matches Your Frontend Requests)
-const PORT = process.env.PORT || 7002;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  const PORT = process.env.PORT || 7000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 });

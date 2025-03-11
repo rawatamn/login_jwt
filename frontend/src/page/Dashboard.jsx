@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../component/Navbar";
+import Movies from "../component/Movies";
+import Corousel from "../component/Corousel";
+import Footer from "../component/Footer";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -20,6 +24,7 @@ const Dashboard = () => {
         });
 
         setUser(response.data);
+        localStorage.setItem("username", response.data.username); // ✅ Store username
       } catch (error) {
         console.error("Failed to fetch user data", error);
         navigate("/login");
@@ -30,16 +35,11 @@ const Dashboard = () => {
   }, [navigate]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h2 className="text-2xl font-bold">Dashboard</h2>
-      {user ? (
-        <div className="mt-4 p-4 border rounded-lg shadow">
-          <p><strong>Username:</strong> {user.username}</p>
-          <p><strong>Email:</strong> {user.useremail}</p>
-        </div>
-      ) : (
-        <p>Loading user data...</p>
-      )}
+    <div>
+      <Navbar />
+      <Corousel/>
+    <Movies/>
+    <Footer/>
     </div>
   );
 };

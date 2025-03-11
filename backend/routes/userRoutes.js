@@ -1,14 +1,23 @@
 const express = require("express");
-const verifyToken = require("../middleware/authMiddleware");
+const User = require("../models/user");
+const verifyToken = require("../middleware/authMiddleware"); // Ensure correct path
 
 const router = express.Router();
 
-router.get("/admin", verifyToken, (req, res) => {
-    res.json({ message: "Welcome Admin", user: req.user });
+// ✅ Fetch Logged-in User Details
+router.get("/me", verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password"); // Exclude password
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching user details", error });
+    }
 });
 
-router.get("/manager", verifyToken, (req, res) => {
-    res.json({ message: "Welcome Manager", user: req.user });
-});
-
+// ✅ Correct Export
 module.exports = router;

@@ -2,7 +2,7 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,15 +17,29 @@ const Login = () => {
   const formik = useFormik({
     initialValues: { useremail: "", password: "" },
     validationSchema,
-    onSubmit: async (values, { setSubmitting, setStatus }) => {
-      setStatus(""); // Reset previous messages
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
         const response = await axios.post("http://localhost:7000/api/auth/login", values);
+        console.log("🔍 Server Response:", response.data);
+
+        if (!response.data.data.token) {
+          throw new Error("No token received from server.");
+        }
+
+        // ✅ Store token & role in localStorage
         localStorage.setItem("token", response.data.data.token);
-        navigate("/dashboard");
+        localStorage.setItem("role", response.data.data.role); // ✅ Store role
+        console.log("Token & Role saved:", response.data.data.token, response.data.data.role);
+
+        // ✅ Navigate based on role
+        if (response.data.data.role === "admin") {
+          navigate("/admindashboard");
+        } else {
+          navigate("/dashboard");
+        }
       } catch (error) {
-        console.error("Login failed", error);
-        setStatus("Invalid email or password.");
+        console.error("❌ Login Error:", error.response?.data || error.message);
+        setErrors({ general: error.response?.data?.message || "Login failed" });
       }
       setSubmitting(false);
     },
@@ -37,7 +51,7 @@ const Login = () => {
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
 
         {/* ✅ Show Error Messages */}
-        {formik.status && <p className="text-red-500 text-sm text-center">{formik.status}</p>}
+        {formik.errors.general && <p className="text-red-500 text-sm text-center">{formik.errors.general}</p>}
 
         <form onSubmit={formik.handleSubmit}>
           {/* ✅ Email Input */}
@@ -79,6 +93,14 @@ const Login = () => {
             {formik.isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        {/* ✅ "User doesn't exist? Register" Link */}
+        <p className="mt-4 text-sm text-center text-gray-600">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-500 hover:underline">
+            Register here
+          </Link>
+        </p>
       </div>
     </div>
   );

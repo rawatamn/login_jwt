@@ -47,10 +47,17 @@ const Navbar = () => {
       {/* ✅ User Info + Admin Icon */}
       <div className="flex items-center space-x-6">
         {/* ✅ User or Sign In */}
+        
         {username ? (
           <div className="flex items-center space-x-3">
             <FaUser className="text-gray-700" />
             <span className="font-medium">Hey, {username}</span>
+              {/* ✅ Admin Icon */}
+        <FaUser
+          onClick={handleAdminLogin}
+          className="text-2xl cursor-pointer text-gray-600 hover:text-red-500"
+          title="Admin Login"
+        />
             <button
               onClick={handleLogout}
               className="bg-red-500 text-white px-3 py-1 rounded-lg"
@@ -66,13 +73,6 @@ const Navbar = () => {
             Sign In
           </button>
         )}
-
-        {/* ✅ Admin Icon */}
-        <FaUser
-          onClick={handleAdminLogin}
-          className="text-2xl cursor-pointer text-gray-600 hover:text-red-500"
-          title="Admin Login"
-        />
       </div>
 
       {/* ✅ Menu Icon */}

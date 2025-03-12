@@ -3,20 +3,26 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Signup from "./page/Signup";
 import Login from "./page/Login";
 import Dashboard from "./page/Dashboard";
+import Admindashboard from "./page/Admindashboard";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 const App = () => {
-  const token = localStorage.getItem("token"); // ✅ Check token
-
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/signup" />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
 
-      {/* ✅ Redirect if not logged in */}
-      <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
+      {/* ✅ Protect /dashboard for "user" role only */}
+      <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Route>
 
-      {/* ✅ Redirect unknown routes to Login */}
+      {/* ✅ Protect /admindashboard for "superadmin" role only */}
+      <Route element={<ProtectedRoute allowedRoles={["superadmin"]} />}>
+        <Route path="/admindashboard" element={<Admindashboard />} />
+      </Route>
+
+      {/* ✅ Redirect unknown routes */}
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );

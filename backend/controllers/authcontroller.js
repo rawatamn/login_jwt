@@ -4,47 +4,63 @@ const Messages = require("../utilities/message");
 const APIResponse = require("../utilities/apiresponse");
 const TokenHandler = require("../utilities/tokengenerator");
 
+// ✅ Register Function
 const register = async (req, res) => {
     try {
         const { username, useremail, password, role } = req.body;
 
-        // Check if the user already exists
-        const existingUser = await User.findOne({ useremail });
-        if (existingUser) {
+        // Check if user already exists
+        let user = await User.findOne({ useremail });
+        if (user) {
             return APIResponse.error(res, {
                 status: 400,
-                message: Messages.USER.EMAIL_EXISTS,
-                error: ""
+                message: "User already exists",
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, useremail, password: hashedPassword, role });
-        await newUser.save();
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Create new user
+        user = new User({
+            username,
+            useremail,
+            password: hashedPassword,
+            role: role || "user", // Default to "user"
+        });
+
+        await user.save();
+
+        // Generate JWT token
+        const token = TokenHandler.generateToken(user);
 
         return APIResponse.success(res, {
             status: 201,
-            message: Messages.USER.SIGNUP_SUCCESS,
-            data: { username, useremail, hashedPassword,role }
+            message: "User registered successfully",
+            data: { token, username: user.username, role: user.role },
         });
     } catch (err) {
         console.error("Registration error:", err);
         return APIResponse.error(res, {
             status: 500,
-            message: Messages.SYSTEM.SERVER_ERROR,
-            error: err.message
+            message: "Internal server error",
+            error: err.message,
         });
     }
 };
+
+// ✅ Login Function
 const login = async (req, res) => {
     try {
         const { useremail, password } = req.body;
         const user = await User.findOne({ useremail });
+
         if (!user) {
             return APIResponse.error(res, {
                 status: 404,
                 message: Messages.USER.LOGIN_FAILED,
-                error: ""
+                error: "User not found",
             });
         }
 
@@ -53,7 +69,7 @@ const login = async (req, res) => {
             return APIResponse.error(res, {
                 status: 400,
                 message: Messages.USER.LOGIN_FAILED,
-                error: ""
+                error: "Incorrect password",
             });
         }
 
@@ -63,16 +79,20 @@ const login = async (req, res) => {
         return APIResponse.success(res, {
             status: 200,
             message: Messages.USER.LOGIN_SUCCESS,
-            data: { token, username: user.username }
+            data: { 
+                token, 
+                username: user.username, 
+                role: user.role // ✅ Include role in response
+            },
         });
     } catch (err) {
         console.error("Login error:", err);
         return APIResponse.error(res, {
             status: 500,
             message: Messages.SYSTEM.SERVER_ERROR,
-            error: err.message
+            error: err.message,
         });
     }
 };
-module.exports = { register, login };
 
+module.exports = { register, login };

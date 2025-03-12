@@ -5,8 +5,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const movieRoutes = require("./routes/moviesRoutes");
-const User = require("./models/user"); 
-const bcrypt = require("bcryptjs");
+const createSuperadmin = require("./utilities/createSuperadmin"); // ✅ Import Superadmin Creator
 
 const app = express();
 
@@ -30,37 +29,12 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// ✅ Creating Superadmin
-async function createSuperadmin() {
-  try {
-    const superadminstate = await User.findOne({ role: "superadmin" });
-
-    if (!superadminstate) {
-      const hashedPassword = await bcrypt.hash("SuperAdmin@123", 10);
-
-      const superadmin = new User({
-        username: "Aman",
-        useremail: "rawat1234@gmail.com", // ✅ Valid email format
-        password: hashedPassword,
-        role: "superadmin"
-      });
-
-      await superadmin.save();
-      console.log("Superadmin created successfully");
-    } else {
-      console.log("Superadmin already exists");
-    }
-  } catch (error) {
-    console.error("Error creating superadmin:", error);
-  }
-}
-
 // ✅ Connect DB & Start Server
 connectDB().then(() => {
-  createSuperadmin();
+  createSuperadmin(); // ✅ Call Superadmin Creation
 
   const PORT = process.env.PORT || 7000;
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`🚀 Server is running on port ${PORT}`);
   });
 });

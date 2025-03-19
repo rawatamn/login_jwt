@@ -29,6 +29,7 @@ const Login = () => {
         // ✅ Store token & role in localStorage
         localStorage.setItem("token", response.data.data.token);
         localStorage.setItem("role", response.data.data.role); // ✅ Store role
+        localStorage.removeItem("userRole");
         console.log("Token & Role saved:", response.data.data.token, response.data.data.role);
 
         // ✅ Navigate based on role

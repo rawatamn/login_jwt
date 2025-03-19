@@ -8,7 +8,7 @@ import Footer from "../component/Footer";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ Added loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,15 +25,19 @@ const Dashboard = () => {
         const response = await axios.get("http://localhost:7000/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         console.log("✅ User Data:", response.data);
         setUser(response.data);
+
+        // Store data in localStorage
         localStorage.setItem("username", response.data.username);
+        localStorage.setItem("userRole", response.data.role);
+        localStorage.setItem("userId", response.data.userId);  // Storing userId
+
       } catch (error) {
         console.error("❌ Failed to fetch user data:", error.response?.data || error.message);
         navigate("/login");
       } finally {
-        setLoading(false); // ✅ Ensure loading is stopped
+        setLoading(false);
       }
     };
 
@@ -41,12 +45,10 @@ const Dashboard = () => {
   }, [navigate]);
 
   if (loading) return <h1 className="text-center mt-10">🔄 Loading Dashboard...</h1>;
-
   if (!user) return <h1 className="text-center mt-10 text-red-500">❌ Error: User data not found</h1>;
 
   return (
     <div>
-     
       <Navbar />
       <Corousel />
       <Movies />

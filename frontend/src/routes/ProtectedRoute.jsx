@@ -5,18 +5,19 @@ function ProtectedRoute({ allowedRoles }) {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("role");
 
-  console.log("ProtectedRoute Debug:", { token, userRole });
+  console.log("🔍 Checking ProtectedRoute:", { token, userRole });
 
   if (!token) {
+    console.warn("⚠️ No token found, redirecting to login...");
     return <Navigate to="/login" />;
   }
 
-  // ✅ Check if the user has permission to access the route
   if (allowedRoles && !allowedRoles.includes(userRole)) {
+    console.warn("⚠️ Unauthorized access! Redirecting...");
     return <Navigate to={userRole === "superadmin" ? "/admindashboard" : "/dashboard"} />;
   }
 
-  return <Outlet />; // ✅ Ensure child components render correctly
+  return <Outlet />;
 }
 
 export default ProtectedRoute;

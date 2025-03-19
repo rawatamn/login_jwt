@@ -5,11 +5,14 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const MoviesCarousel = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token"); // Get token from storage
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -17,7 +20,7 @@ const MoviesCarousel = () => {
         const response = await axios.get("http://localhost:7000/api/movies", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setMovies(response.data); // ✅ Set movies data
+        setMovies(response.data);
       } catch (error) {
         console.error("Error fetching movies:", error);
       }
@@ -28,41 +31,80 @@ const MoviesCarousel = () => {
   }, []);
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto"> {/* ✅ Increased max width */}
-      <h2 className="text-3xl font-bold mb-6 text-left text-gray-800">Recommended Movies</h2>
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      className="p-6 max-w-[1600px] mx-auto"
+    >
+      {/* 🎬 Animated Heading */}
+      <motion.h2
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="text-3xl font-bold mb-6 text-left text-gray-800"
+      >
+        Recommended Movies
+      </motion.h2>
+
       {loading ? (
-        <p className="text-center text-lg text-gray-600">Loading...</p>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-center text-lg text-gray-600"
+        >
+          🔄 Loading...
+        </motion.p>
       ) : (
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
           spaceBetween={20}
-          slidesPerView={4} // ✅ Now shows 4 movies at a time
+          slidesPerView={4}
           navigation
           pagination={{ clickable: true }}
           autoplay={{ delay: 3000 }}
           loop={true}
           breakpoints={{
-            640: { slidesPerView: 2 }, // ✅ 2 movies on small screens
-            1024: { slidesPerView: 3 }, // ✅ 3 movies on medium screens
-            1280: { slidesPerView: 5 }  // ✅ 4 movies on large screens
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+            1280: { slidesPerView: 5 },
           }}
           className="pb-6"
         >
           {movies.map((movie) => (
             <SwiperSlide key={movie._id}>
-              <div className="bg-white p-4 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer">
-                <img
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.3)" }}
+                className="bg-white p-4 rounded-lg shadow-lg cursor-pointer transition-transform transform"
+                onClick={() => navigate(`/movies/${movie._id}`)}
+              >
+                {/* 🎬 Movie Poster with Hover Effect */}
+                <motion.img
                   src={movie.image}
                   alt={movie.title}
                   className="w-full h-[500px] object-cover rounded-lg transition-opacity duration-300 hover:opacity-90"
+                  whileHover={{ scale: 1.02 }}
                 />
-                <h3 className="text-xl font-semibold mt-3 text-center text-gray-800">{movie.title}</h3>
-              </div>
+
+                {/* 🎥 Movie Title */}
+                <motion.h3
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="text-xl font-semibold mt-3 text-center text-gray-800"
+                >
+                  {movie.title}
+                </motion.h3>
+              </motion.div>
             </SwiperSlide>
           ))}
         </Swiper>
       )}
-    </div>
+    </motion.div>
   );
 };
 

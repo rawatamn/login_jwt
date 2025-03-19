@@ -1,15 +1,24 @@
 const mongoose = require("mongoose");
+const { customAlphabet } = require("nanoid");
+
+// ✅ Generate a default `userId` (10-character alphanumeric)
+const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10);
 
 const userSchema = new mongoose.Schema(
   {
+    userId: {
+      type: String,
+      unique: true,
+      default: () => nanoid(), // ✅ Auto-generate unique userId
+    },
     username: {
       type: String,
-      required: true,  // Username is now required
+      required: true,
     },
     useremail: {
       type: String,
       required: true,
-      unique: true,  // Ensure unique email
+      unique: true,
     },
     password: {
       type: String,
@@ -18,11 +27,16 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: [ "user","superadmin"],
+      enum: ["user", "superadmin"],
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // ✅ Reference to Superadmin who last updated
+      default: null,
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // ✅ Auto-generates createdAt & updatedAt
   }
 );
 

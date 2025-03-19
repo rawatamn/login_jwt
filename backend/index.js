@@ -7,6 +7,7 @@ const userRoutes = require("./routes/userRoutes");
 const movieRoutes = require("./routes/moviesRoutes");
 const createSuperadmin = require("./utilities/createSuperadmin"); // ✅ Import Superadmin Creator
 
+
 const app = express();
 
 // ✅ Enable CORS before routes
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/movies", movieRoutes); // ✅ Keep routes after CORS
+app.use("/api/cart", require("./routes/cartroutes"));
 
 // ✅ Test Route
 app.get("/", (req, res) => {

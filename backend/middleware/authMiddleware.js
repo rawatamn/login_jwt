@@ -39,7 +39,13 @@ const verifyToken = async (req, res, next) => {
             });
         }
 
-        req.user = { id: user._id, role: user.role }; // Attach role to request
+        // ✅ Attach `id`, `role`, and `username` to `req.user`
+        req.user = { 
+            id: user._id, 
+            role: user.role,
+            username: user.username  // ✅ Now the `username` is available
+        }; 
+
         next();
     } catch (error) {
         return APIResponse.error(res, {

@@ -1,15 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const Movie = require("../models/movie");
+const movieController = require("../controllers/movieController");
 
-// ✅ Get all movies
-router.get("/", async (req, res) => {
-  try {
-    const movies = await Movie.find();
-    res.json(movies);
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
-  }
-});
+// ✅ Define Routes (ORDER MATTERS)
+router.get("/moviecount", movieController.createMovieCount); // ✅ Move this above `/:id`
+router.get("/", movieController.getAllMovies);
+router.get("/search", movieController.searchMovies);
+router.get("/:id", movieController.getMovieById); // Keep this last
+router.post("/", movieController.createMovie);
+router.put("/:id", movieController.updateMovie); 
+router.delete("/:id", movieController.deleteMovie);
 
 module.exports = router;

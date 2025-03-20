@@ -70,27 +70,34 @@ const UserList = () => {
       setIsSaving(true);
       setErrorMessage("");
       const token = localStorage.getItem("token");
-
+  
       const response = await axios.put(
         `http://localhost:7000/api/users/${editUserId}`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
+  
       console.log("🟢 User updated:", response.data);
-
+  
       setUsers(users.map(user =>
         user._id === editUserId ? { ...user, ...formData, updatedBy: response.data.formattedUser.updatedBy } : user
       ));
-
+  
       setEditUserId(null);
     } catch (error) {
-      console.error("❌ Error updating user:", error.response?.data || error.message);
+      console.error("❌ Error updating user:", error);
+  
+      // ✅ Log complete error response for debugging
+      if (error.response) {
+        console.error("🔴 Server Response:", error.response.data);
+      }
+  
       setErrorMessage(error.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
       setIsSaving(false);
     }
   };
+  
 
   if (loading) return <p className="text-center mt-4">Loading users...</p>;
 

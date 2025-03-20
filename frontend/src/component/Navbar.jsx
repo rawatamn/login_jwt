@@ -1,14 +1,17 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaSearch, FaShoppingCart, FaHistory, FaTimes, FaTrash } from "react-icons/fa";
-import { CartContext } from "../context/CartContext"; // ✅ Import CartContext
+import axios from "axios";
+import { CartContext } from "../context/CartContext"; 
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const { cart, setCart } = useContext(CartContext); // ✅ Get cart state
+  const { cart, setCart } = useContext(CartContext);
 
   // ✅ Fetch username from localStorage
   useEffect(() => {
@@ -18,6 +21,40 @@ const Navbar = () => {
     }
   }, []);
 
+  // ✅ Fetch Movies from Backend with Regex Search
+  useEffect(() => {
+    const fetchMovies = async () => {
+      if (searchQuery.trim() === "") {
+        setFilteredMovies([]);
+        return;
+      }
+  
+      setLoading(true);
+      try {
+        const response = await axios.get(`http://localhost:7000/api/movies/search?q=${searchQuery}`);
+        setFilteredMovies(response.data);
+      } catch (error) {
+        console.error("❌ Error searching movies:", error);
+        setFilteredMovies([]);
+      }
+      setLoading(false);
+    };
+  
+    if (searchQuery) {
+      const timeoutId = setTimeout(fetchMovies, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [searchQuery]);
+  
+
+  // ✅ Handle Movie Selection (Redirect)
+  const handleMovieSelect = (movieId) => {
+    console.log("🔍 Navigating to movie:", movieId); // Debugging
+    setSearchQuery(""); 
+    setFilteredMovies([]);
+    navigate(`/movies/${movieId}`);
+  };
+
   // ✅ Remove Movie from Cart
   const removeFromCart = (movieId) => {
     setCart((prevCart) => prevCart.filter((item) => item._id !== movieId));
@@ -26,10 +63,10 @@ const Navbar = () => {
   return (
     <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md relative">
       
-      {/* ✅ Logo (Click to go back to login) */}
+      {/* ✅ Logo */}
       <span 
         className="text-3xl font-bold cursor-pointer"
-        onClick={() => navigate("/login")} // ✅ Redirect to login page
+        onClick={() => navigate("/login")}
       >
         book<span className="text-red-500">my</span>show
       </span>
@@ -46,6 +83,27 @@ const Navbar = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+
+        {/* ✅ Search Suggestions Dropdown */}
+        {searchQuery && (
+          <div className="absolute w-full bg-white shadow-lg rounded-lg mt-2 max-h-60 overflow-y-auto z-10">
+            {loading ? (
+              <p className="p-3 text-gray-500">Loading...</p>
+            ) : filteredMovies.length > 0 ? (
+              filteredMovies.map((movie) => (
+                <div
+                  key={movie._id}
+                  className="p-3 cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleMovieSelect(movie._id)}
+                >
+                  {movie.title}
+                </div>
+              ))
+            ) : (
+              <p className="p-3 text-gray-500">No movies found</p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ✅ User Info + Cart + Order History */}
@@ -56,7 +114,7 @@ const Navbar = () => {
           <FaHistory className="text-gray-700 text-2xl" title="Order History" />
         </div>
 
-        {/* ✅ Cart Icon with Popup Trigger */}
+        {/* ✅ Cart Icon */}
         <div className="relative cursor-pointer" onClick={() => setIsCartOpen(!isCartOpen)}>
           <FaShoppingCart className="text-gray-700 text-2xl" />
           {cart.length > 0 && (
@@ -75,6 +133,8 @@ const Navbar = () => {
               onClick={() => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("username");
+                localStorage.removeItem("userId");
+                
                 navigate("/login");
               }}
               className="bg-red-500 text-white px-3 py-1 rounded-lg"
@@ -126,7 +186,7 @@ const Navbar = () => {
           {cart.length > 0 && (
             <button
               className="bg-green-500 text-white w-full py-2 mt-4 rounded-lg font-bold"
-              onClick={() => navigate("/payment", { state: { cart } })} // ✅ Pass cart data
+              onClick={() => navigate("/payment", { state: { cart } })}
             >
               Proceed to Payment
             </button>

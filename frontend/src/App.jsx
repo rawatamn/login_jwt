@@ -10,11 +10,10 @@ import Admindashboard from "./page/Admindashboard";
 import Moviedetail from "./page/Moviedetail";
 import AddMovie from "./component/AddMovie";
 import Payment from "./page/Payment"; // ✅ Payment Page
-// ✅ New Orders Page
+import Orders from "./page/Orders"; // ✅ Orders Page
 
 // ✅ Import Routes
 import ProtectedRoute from "./routes/ProtectedRoute";
-import Orders from "./page/Orders";
 
 const App = () => {
   return (
@@ -23,11 +22,11 @@ const App = () => {
         {/* ✅ Public Routes */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/movies/:id" element={<Moviedetail />} /> {/* ✅ Movie Details now public */}
 
         {/* ✅ Protected Routes for Users */}
         <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/movies/:id" element={<Moviedetail />} />
           <Route path="/payment" element={<Payment />} /> {/* ✅ Payment Route */}
           <Route path="/orders" element={<Orders />} /> {/* ✅ Orders Route */}
         </Route>

@@ -7,24 +7,24 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {const fetchOrders = async () => {
-    try {
-      const userId = localStorage.getItem("userId");
-      if (!userId) {
-        navigate("/login"); // ✅ Redirect if not logged in
-        return;
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+          navigate("/login"); // ✅ Redirect if not logged in
+          return;
+        }
+
+        // ✅ Correct API call - no need for additional filtering
+        const response = await axios.get(`http://localhost:7000/api/cart/orders/${userId}`);
+        setOrders(response.data); // ✅ Directly set response data
+        setLoading(false);
+      } catch (error) {
+        console.error("❌ Error fetching orders:", error);
+        setLoading(false);
       }
-  
-      // ✅ Correct API call - no need for additional filtering
-      const response = await axios.get(`http://localhost:7000/api/cart/orders/${userId}`);
-      
-      setOrders(response.data); // ✅ Directly set response data
-      setLoading(false);
-    } catch (error) {
-      console.error("❌ Error fetching orders:", error);
-      setLoading(false);
-    }
-  };
+    };
 
     fetchOrders();
   }, [navigate]);
@@ -41,7 +41,7 @@ const Orders = () => {
             <div key={order._id} className="border p-4 rounded-lg mb-4 shadow-sm">
               <h3 className="text-lg font-semibold">Order ID: {order._id}</h3>
               <p className="text-gray-600">📅 Booking Date: {new Date(order.createdAt).toLocaleString()}</p>
-              
+
               <ul className="mt-2">
                 {order.movies.map((movie) => (
                   <li key={movie.movieId} className="flex justify-between py-2 border-b">
@@ -69,6 +69,16 @@ const Orders = () => {
       ) : (
         <p className="text-center text-gray-500">No previous orders found.</p>
       )}
+
+      {/* ✅ Back to Dashboard Button */}
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="bg-blue-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-600 transition"
+        >
+          🔙 Back to Dashboard
+        </button>
+      </div>
     </div>
   );
 };

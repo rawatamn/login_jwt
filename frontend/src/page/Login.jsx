@@ -26,14 +26,21 @@ const Login = () => {
           throw new Error("No token received from server.");
         }
 
-        // ✅ Store token & role in localStorage
-        localStorage.setItem("token", response.data.data.token);
-        localStorage.setItem("role", response.data.data.role); // ✅ Store role
-        localStorage.removeItem("userRole");
-        console.log("Token & Role saved:", response.data.data.token, response.data.data.role);
+        const { token, role } = response.data.data;
+
+        // ✅ Decode JWT Token to get userId
+        const decoded = JSON.parse(atob(token.split(".")[1])); // Decode JWT payload
+        console.log("Decoded Token:", decoded);
+
+        // ✅ Store token, role, and userId in localStorage
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
+        localStorage.setItem("userId", decoded.id); // ✅ Fix: Store user ID
+
+        console.log("Stored userId:", decoded.id);
 
         // ✅ Navigate based on role
-        if (response.data.data.role === "admin") {
+        if (role === "admin") {
           navigate("/admindashboard");
         } else {
           navigate("/dashboard");

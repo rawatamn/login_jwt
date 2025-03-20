@@ -19,29 +19,36 @@ const Admindashboard = () => {
           navigate("/login"); // ✅ Redirect if no token
           return;
         }
-
+  
         // ✅ Fetch User Count
         const userResponse = await axios.get("http://localhost:7000/api/users/count", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         // ✅ Fetch Movie Count
         const movieResponse = await axios.get("http://localhost:7000/api/movies/moviecount", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        setStats((prevStats) => ({
+  
+        // ✅ Fetch Total Revenue
+        const revenueResponse = await axios.get("http://localhost:7000/api/users/total-revenue", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        setStats({
           totalUsers: userResponse.data.totalUsers,
           totalMovies: movieResponse.data.totalMovies,
-          totalRevenue: prevStats.totalRevenue, // Keep revenue unchanged
-        }));
+          totalRevenue: revenueResponse.data.totalRevenue, // ✅ Update revenue
+        });
+  
       } catch (error) {
         console.error("❌ Error fetching stats:", error);
       }
     };
-
+  
     fetchStats();
   }, []);
+  
 
   // ✅ Logout Function
   const handleLogout = () => {

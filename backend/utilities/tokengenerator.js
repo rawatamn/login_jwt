@@ -6,7 +6,7 @@ class TokenHandler {
         // Generate a JWT token with user details and a 1-hour expiry
         return jwt.sign(
             { 
-                id: user._id, 
+                id: user._id.toString(), 
                 email: user.email, 
                 role: user.role 
             },

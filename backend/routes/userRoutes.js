@@ -10,4 +10,5 @@ router.post("/", verifyToken, userController.createUser);
 router.put("/:id", verifyToken, userController.updateUser);
 router.delete("/:id", verifyToken, userController.deleteUser);
 router.get("/count", verifyToken, userController.getUserCount);
+router.get("/total-revenue", verifyToken, userController.getTotalRevenue);
 module.exports = router;

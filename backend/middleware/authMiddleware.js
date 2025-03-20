@@ -5,9 +5,11 @@ const TokenHandler = require("../utilities/tokengenerator");
 
 const verifyToken = async (req, res, next) => {
     try {
-        const authHeader = req.headers.authorization; // Ensure header key is lowercase
+        console.log("🔹 Verifying Token...");
 
+        const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            console.log("❌ No Authorization Header Found");
             return APIResponse.error(res, {
                 status: 401,
                 message: Messages.AUTH.TOKEN_MISSING,
@@ -19,8 +21,10 @@ const verifyToken = async (req, res, next) => {
 
         // ✅ Verify Token
         const decoded = TokenHandler.verifyToken(token);
+        console.log("🔍 Decoded Token:", decoded);
 
-        if (!decoded) {
+        if (!decoded || !decoded.id) {
+            console.log("❌ Token verification failed or missing user ID");
             return APIResponse.error(res, {
                 status: 401,
                 message: Messages.AUTH.TOKEN_INVALID,
@@ -30,8 +34,8 @@ const verifyToken = async (req, res, next) => {
 
         // ✅ Fetch the user from the database
         const user = await User.findById(decoded.id);
-
         if (!user) {
+            console.log("❌ User not found in DB for ID:", decoded.id);
             return APIResponse.error(res, {
                 status: 404,
                 message: "User not found",
@@ -39,15 +43,17 @@ const verifyToken = async (req, res, next) => {
             });
         }
 
-        // ✅ Attach `id`, `role`, and `username` to `req.user`
-        req.user = { 
-            id: user._id, 
+        // ✅ Attach `id` properly in `req.user`
+        req.user = {
+            id: user._id.toString(), // ✅ Use `id` instead of `_id`
             role: user.role,
-            username: user.username  // ✅ Now the `username` is available
-        }; 
+            username: user.username
+        };
 
+        console.log("✅ User Authenticated:", req.user);
         next();
     } catch (error) {
+        console.error("❌ Authentication Error:", error);
         return APIResponse.error(res, {
             status: 500,
             message: "Authentication failed",
@@ -57,3 +63,5 @@ const verifyToken = async (req, res, next) => {
 };
 
 module.exports = verifyToken;
+
+

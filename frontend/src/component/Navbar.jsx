@@ -127,7 +127,7 @@ const Navbar = () => {
         {/* ✅ Logout or Sign In */}
         {username ? (
           <div className="flex items-center space-x-3">
-            <FaUser className="text-gray-700" />
+           
             <span className="font-medium">Hey, {username}</span>
             <button
               onClick={() => {

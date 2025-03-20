@@ -1,23 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Form Validation Schema
+  // ✅ Validation Schema
   const validationSchema = Yup.object({
     useremail: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().min(6, "Must be at least 6 characters").required("Required"),
   });
 
-  // ✅ Formik for Form Handling
   const formik = useFormik({
     initialValues: { useremail: "", password: "" },
     validationSchema,
-    onSubmit: async (values, { setSubmitting, setErrors }) => {
+    onSubmit: async (values, { setErrors }) => {
+      setLoading(true);
       try {
         const response = await axios.post("http://localhost:7000/api/auth/login", values);
         console.log("🔍 Server Response:", response.data);
@@ -29,87 +31,90 @@ const Login = () => {
         const { token, role } = response.data.data;
 
         // ✅ Decode JWT Token to get userId
-        const decoded = JSON.parse(atob(token.split(".")[1])); // Decode JWT payload
+        const decoded = JSON.parse(atob(token.split(".")[1])); 
         console.log("Decoded Token:", decoded);
 
         // ✅ Store token, role, and userId in localStorage
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
-        localStorage.setItem("userId", decoded.id); // ✅ Fix: Store user ID
+        localStorage.setItem("userId", decoded.id);
 
         console.log("Stored userId:", decoded.id);
 
-        // ✅ Navigate based on role
-        if (role === "admin") {
-          navigate("/admindashboard");
-        } else {
-          navigate("/dashboard");
-        }
+        // ✅ Redirect based on role
+        navigate(role === "admin" ? "/admindashboard" : "/dashboard");
       } catch (error) {
         console.error("❌ Login Error:", error.response?.data || error.message);
         setErrors({ general: error.response?.data?.message || "Login failed" });
       }
-      setSubmitting(false);
+      setLoading(false);
     },
   });
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+      <motion.div
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="bg-white/20 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-sm"
+      >
+        <h2 className="text-3xl font-extrabold text-white text-center mb-6">Welcome Back</h2>
 
         {/* ✅ Show Error Messages */}
-        {formik.errors.general && <p className="text-red-500 text-sm text-center">{formik.errors.general}</p>}
+        {formik.errors.general && (
+          <p className="text-red-300 text-sm text-center mb-3">{formik.errors.general}</p>
+        )}
 
-        <form onSubmit={formik.handleSubmit}>
-          {/* ✅ Email Input */}
-          <div className="mb-3">
-            <label htmlFor="useremail" className="block text-gray-700 font-medium">Email</label>
+        <form onSubmit={formik.handleSubmit} className="space-y-5">
+          {/* Email Input */}
+          <div className="relative">
             <input
               {...formik.getFieldProps("useremail")}
               type="email"
-              id="useremail"
-              placeholder="Enter your email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Email"
+              className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-lg focus:ring-2 focus:ring-white text-white placeholder-white transition-all duration-300"
             />
             {formik.touched.useremail && formik.errors.useremail && (
-              <p className="text-red-500 text-sm">{formik.errors.useremail}</p>
+              <p className="text-red-300 text-sm mt-1">{formik.errors.useremail}</p>
             )}
           </div>
 
-          {/* ✅ Password Input */}
-          <div className="mb-3">
-            <label htmlFor="password" className="block text-gray-700 font-medium">Password</label>
+          {/* Password Input */}
+          <div className="relative">
             <input
               {...formik.getFieldProps("password")}
               type="password"
-              id="password"
-              placeholder="Enter your password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Password"
+              className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-lg focus:ring-2 focus:ring-white text-white placeholder-white transition-all duration-300"
             />
             {formik.touched.password && formik.errors.password && (
-              <p className="text-red-500 text-sm">{formik.errors.password}</p>
+              <p className="text-red-300 text-sm mt-1">{formik.errors.password}</p>
             )}
           </div>
 
-          {/* ✅ Submit Button */}
-          <button
+          {/* Submit Button */}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
-            disabled={formik.isSubmitting}
+            disabled={loading}
+            className="w-full bg-white text-indigo-500 font-bold py-3 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-300"
           >
-            {formik.isSubmitting ? "Logging in..." : "Login"}
-          </button>
+            {loading ? "Logging in..." : "Login"}
+          </motion.button>
         </form>
 
-        {/* ✅ "User doesn't exist? Register" Link */}
-        <p className="mt-4 text-sm text-center text-gray-600">
+        {/* ✅ "Don't have an account? Register" Link */}
+        <p className="mt-6 text-center text-white text-lg">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-500 hover:underline">
-            Register here
+          <Link
+            to="/signup"
+            className="text-yellow-300 font-bold cursor-pointer hover:text-yellow-500 transition duration-200"
+          >
+            Sign Up
           </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };

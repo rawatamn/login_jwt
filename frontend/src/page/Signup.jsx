@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const validationSchema = Yup.object({
     username: Yup.string().min(3, "Must be at least 3 characters").required("Required"),
@@ -17,75 +19,95 @@ const Signup = () => {
     initialValues: { username: "", useremail: "", password: "" },
     validationSchema,
     onSubmit: async (values) => {
+      setLoading(true);
       try {
         await axios.post("http://localhost:7000/api/auth/register", {
           ...values,
-          role: "user", // Ensure role is always included
+          role: "user",
         });
         navigate("/login");
       } catch (error) {
-        console.error("Signup failed", error.response?.data || error.message);
+        console.error("❌ Signup failed", error.response?.data || error.message);
+      } finally {
+        setLoading(false);
       }
     },
-    
   });
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form 
-        onSubmit={formik.handleSubmit} 
-        className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm"
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500">
+      <motion.div
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="bg-white/20 backdrop-blur-lg p-8 rounded-2xl shadow-xl w-full max-w-sm"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+        <h2 className="text-3xl font-extrabold text-white text-center mb-6">
+          Create Account
+        </h2>
 
-        {/* Username Input */}
-        <input 
-          {...formik.getFieldProps("username")} 
-          placeholder="Username" 
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 focus:ring-2 focus:ring-blue-500"
-        />
-        {formik.touched.username && formik.errors.username && (
-          <p className="text-red-500 text-sm">{formik.errors.username}</p>
-        )}
+        <form onSubmit={formik.handleSubmit} className="space-y-5">
+          {/* Username Input */}
+          <div className="relative">
+            <input
+              {...formik.getFieldProps("username")}
+              type="text"
+              placeholder="Username"
+              className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-lg focus:ring-2 focus:ring-white text-white placeholder-white transition-all duration-300"
+            />
+            {formik.touched.username && formik.errors.username && (
+              <p className="text-red-300 text-sm mt-1">{formik.errors.username}</p>
+            )}
+          </div>
 
-        {/* Email Input */}
-        <input 
-          {...formik.getFieldProps("useremail")} 
-          placeholder="Email" 
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 focus:ring-2 focus:ring-blue-500"
-        />
-        {formik.touched.useremail && formik.errors.useremail && (
-          <p className="text-red-500 text-sm">{formik.errors.useremail}</p>
-        )}
+          {/* Email Input */}
+          <div className="relative">
+            <input
+              {...formik.getFieldProps("useremail")}
+              type="email"
+              placeholder="Email"
+              className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-lg focus:ring-2 focus:ring-white text-white placeholder-white transition-all duration-300"
+            />
+            {formik.touched.useremail && formik.errors.useremail && (
+              <p className="text-red-300 text-sm mt-1">{formik.errors.useremail}</p>
+            )}
+          </div>
 
-        {/* Password Input */}
-        <input 
-          {...formik.getFieldProps("password")} 
-          type="password" 
-          placeholder="Password" 
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 focus:ring-2 focus:ring-blue-500"
-        />
-        {formik.touched.password && formik.errors.password && (
-          <p className="text-red-500 text-sm">{formik.errors.password}</p>
-        )}
+          {/* Password Input */}
+          <div className="relative">
+            <input
+              {...formik.getFieldProps("password")}
+              type="password"
+              placeholder="Password"
+              className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-lg focus:ring-2 focus:ring-white text-white placeholder-white transition-all duration-300"
+            />
+            {formik.touched.password && formik.errors.password && (
+              <p className="text-red-300 text-sm mt-1">{formik.errors.password}</p>
+            )}
+          </div>
 
-        {/* Submit Button */}
-        <button 
-          type="submit" 
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
-        >
-          Sign Up
-        </button>
-        <p className="mt-5 text-center text-lg text-gray-500">
+          {/* Submit Button with Loading */}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            type="submit"
+            disabled={loading}
+            className="w-full bg-white text-blue-500 font-bold py-3 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300"
+          >
+            {loading ? "Signing Up..." : "Sign Up"}
+          </motion.button>
+        </form>
+
+        {/* Login Link */}
+        <p className="mt-6 text-center text-white text-lg">
           Already have an account?{" "}
           <span
-            className="text-blue-500 font-bold cursor-pointer"
+            className="text-yellow-300 font-bold cursor-pointer hover:text-yellow-500 transition duration-200"
             onClick={() => navigate("/login")}
           >
             Login
           </span>
-          </p>
-      </form>
+        </p>
+      </motion.div>
     </div>
   );
 };

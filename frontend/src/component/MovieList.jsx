@@ -1,38 +1,37 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
 import AddMovie from "./AddMovie"; // Import AddMovie component
+import { deleteMovie, fetchMovies } from "../api/movieAdminapi";
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddMovie, setShowAddMovie] = useState(false); // ✅ Toggle Add/Edit Form
   const [editMovie, setEditMovie] = useState(null); // ✅ Store movie to edit
-  const navigate = useNavigate();
 
-  // ✅ Fetch Movies from Backend
+  // ✅ Fetch Movies from API
   useEffect(() => {
-    const fetchMovies = async () => {
+    const loadMovies = async () => {
       try {
-        const response = await axios.get("http://localhost:7000/api/movies");
-        setMovies(response.data);
-        setLoading(false);
+        const moviesData = await fetchMovies();
+        setMovies(moviesData);
       } catch (error) {
-        console.error("❌ Error fetching movies:", error);
+        console.error("❌ Error loading movies.");
+      } finally {
         setLoading(false);
       }
     };
-    fetchMovies();
+
+    loadMovies();
   }, []);
 
   // ✅ Delete Movie Function
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:7000/api/movies/${id}`);
+      await deleteMovie(id);
       setMovies(movies.filter((movie) => movie._id !== id));
       alert("Movie deleted successfully!");
     } catch (error) {
-      console.error("❌ Error deleting movie:", error.response || error);
       alert("Error deleting movie.");
     }
   };

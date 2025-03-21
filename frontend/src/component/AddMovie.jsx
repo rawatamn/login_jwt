@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { addMovie, updateMovie } from "../api/movieAdminapi";
+
 
 const AddMovie = ({ setMovies, setShowAddMovie, editMovie }) => {
   const [formData, setFormData] = useState({
@@ -12,7 +13,7 @@ const AddMovie = ({ setMovies, setShowAddMovie, editMovie }) => {
     rating: "",
   });
 
-  // ✅ Fill form if editing
+  // ✅ Prefill form if editing
   useEffect(() => {
     if (editMovie) {
       setFormData(editMovie);
@@ -23,17 +24,20 @@ const AddMovie = ({ setMovies, setShowAddMovie, editMovie }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // ✅ Handle Submit for Add/Edit
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editMovie) {
-        // ✅ Update existing movie
-        await axios.put(`http://localhost:7000/api/movies/${editMovie._id}`, formData);
-        setMovies((prev) => prev.map((m) => (m._id === editMovie._id ? formData : m)));
+        // ✅ Update movie
+        await updateMovie(editMovie._id, formData);
+        setMovies((prev) =>
+          prev.map((m) => (m._id === editMovie._id ? { ...m, ...formData } : m))
+        );
       } else {
         // ✅ Add new movie
-        const response = await axios.post("http://localhost:7000/api/movies", formData);
-        setMovies((prev) => [...prev, response.data.movie]);
+        const newMovie = await addMovie(formData);
+        setMovies((prev) => [...prev, newMovie]);
       }
       setShowAddMovie(false);
     } catch (error) {

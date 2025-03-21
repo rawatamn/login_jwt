@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -7,27 +6,25 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { fetchMovies } from "../api/movieApi"; // ✅ Import centralized API function
 
 const MoviesCarousel = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const loadMovies = async () => {
       try {
-        const response = await axios.get("http://localhost:7000/api/movies", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setMovies(response.data);
+        const data = await fetchMovies(); // ✅ Fetch movies via API function
+        setMovies(data);
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        console.error("❌ Error loading movies:", error);
       }
       setLoading(false);
     };
 
-    fetchMovies();
+    loadMovies();
   }, []);
 
   return (

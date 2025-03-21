@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { loginUser } from "../api/authApi";
+ // ✅ Import login API function
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,14 +22,14 @@ const Login = () => {
     onSubmit: async (values, { setErrors }) => {
       setLoading(true);
       try {
-        const response = await axios.post("http://localhost:7000/api/auth/login", values);
-        console.log("🔍 Server Response:", response.data);
+        const data = await loginUser(values); // ✅ Call API function
+        console.log("🔍 Server Response:", data);
 
-        if (!response.data.data.token) {
+        if (!data.data.token) {
           throw new Error("No token received from server.");
         }
 
-        const { token, role } = response.data.data;
+        const { token, role } = data.data;
 
         // ✅ Decode JWT Token to get userId
         const decoded = JSON.parse(atob(token.split(".")[1])); 
@@ -44,7 +45,6 @@ const Login = () => {
         // ✅ Redirect based on role
         navigate(role === "admin" ? "/admindashboard" : "/dashboard");
       } catch (error) {
-        console.error("❌ Login Error:", error.response?.data || error.message);
         setErrors({ general: error.response?.data?.message || "Login failed" });
       }
       setLoading(false);

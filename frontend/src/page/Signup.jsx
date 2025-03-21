@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { registerUser } from "../api/authApi";
+ // ✅ Import signup API function
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -18,19 +19,15 @@ const Signup = () => {
   const formik = useFormik({
     initialValues: { username: "", useremail: "", password: "" },
     validationSchema,
-    onSubmit: async (values) => {
+    onSubmit: async (values, { setErrors }) => {
       setLoading(true);
       try {
-        await axios.post("http://localhost:7000/api/auth/register", {
-          ...values,
-          role: "user",
-        });
+        await registerUser(values); // ✅ Call API function
         navigate("/login");
       } catch (error) {
-        console.error("❌ Signup failed", error.response?.data || error.message);
-      } finally {
-        setLoading(false);
+        setErrors({ general: error.response?.data?.message || "Signup failed" });
       }
+      setLoading(false);
     },
   });
 
@@ -45,6 +42,11 @@ const Signup = () => {
         <h2 className="text-3xl font-extrabold text-white text-center mb-6">
           Create Account
         </h2>
+
+        {/* ✅ Show Error Messages */}
+        {formik.errors.general && (
+          <p className="text-red-300 text-sm text-center mb-3">{formik.errors.general}</p>
+        )}
 
         <form onSubmit={formik.handleSubmit} className="space-y-5">
           {/* Username Input */}

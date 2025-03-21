@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaSearch, FaShoppingCart, FaHistory, FaTimes, FaTrash } from "react-icons/fa";
-import axios from "axios";
 import { CartContext } from "../context/CartContext"; 
+import { searchMovies } from "../api/userApi"; // ✅ Import centralized API
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Navbar = () => {
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const { cart, setCart } = useContext(CartContext);
+  const { cart, setCart, removeFromCart } = useContext(CartContext); // ✅ Access cart state
 
   // ✅ Fetch username from localStorage
   useEffect(() => {
@@ -30,13 +30,8 @@ const Navbar = () => {
       }
   
       setLoading(true);
-      try {
-        const response = await axios.get(`http://localhost:7000/api/movies/search?q=${searchQuery}`);
-        setFilteredMovies(response.data);
-      } catch (error) {
-        console.error("❌ Error searching movies:", error);
-        setFilteredMovies([]);
-      }
+      const movies = await searchMovies(searchQuery); // ✅ Use centralized API function
+      setFilteredMovies(movies);
       setLoading(false);
     };
   
@@ -45,19 +40,12 @@ const Navbar = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [searchQuery]);
-  
 
   // ✅ Handle Movie Selection (Redirect)
   const handleMovieSelect = (movieId) => {
-    console.log("🔍 Navigating to movie:", movieId); // Debugging
     setSearchQuery(""); 
     setFilteredMovies([]);
     navigate(`/movies/${movieId}`);
-  };
-
-  // ✅ Remove Movie from Cart
-  const removeFromCart = (movieId) => {
-    setCart((prevCart) => prevCart.filter((item) => item._id !== movieId));
   };
 
   return (
@@ -127,14 +115,10 @@ const Navbar = () => {
         {/* ✅ Logout or Sign In */}
         {username ? (
           <div className="flex items-center space-x-3">
-           
             <span className="font-medium">Hey, {username}</span>
             <button
               onClick={() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("username");
-                localStorage.removeItem("userId");
-                
+                localStorage.clear();
                 navigate("/login");
               }}
               className="bg-red-500 text-white px-3 py-1 rounded-lg"

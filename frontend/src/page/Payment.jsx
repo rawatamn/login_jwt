@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { CartContext } from "../context/CartContext";
+import { confirmPayment, initiatePayment } from "../api/paymentApi";
+
 
 const Payment = () => {
   const location = useLocation();
@@ -15,24 +16,24 @@ const Payment = () => {
 
   // ✅ Initiate Payment on Page Load
   useEffect(() => {
-    const initiatePayment = async () => {
+    const loadPaymentStatus = async () => {
       try {
         const userId = localStorage.getItem("userId");
-        const response = await axios.post("http://localhost:7000/api/cart/initiate-payment", { userId });
-        setPaymentStatus(response.data.cart.paymentStatus);
+        const status = await initiatePayment(userId); // ✅ Use centralized API
+        setPaymentStatus(status);
       } catch (error) {
-        console.error("❌ Error initiating payment:", error);
+        console.error(error);
       }
     };
 
-    initiatePayment();
+    loadPaymentStatus();
   }, []);
 
   // ✅ Handle Payment Completion
   const handlePayment = async () => {
     try {
       const userId = localStorage.getItem("userId");
-      await axios.post("http://localhost:7000/api/cart/confirm-payment", { userId });
+      await confirmPayment(userId); // ✅ Use centralized API
       alert("Payment Successful! 🎉");
 
       // ✅ Clear Cart after Payment
@@ -42,8 +43,7 @@ const Payment = () => {
       // ✅ Redirect to Dashboard
       navigate("/dashboard");
     } catch (error) {
-      console.error("❌ Error confirming payment:", error);
-      alert("Payment Failed. Please try again.");
+      alert(error.message);
     }
   };
 

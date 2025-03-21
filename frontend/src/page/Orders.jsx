@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { fetchUserOrders } from "../api/orderApi";
+
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -8,25 +9,18 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const userId = localStorage.getItem("userId");
-        if (!userId) {
-          navigate("/login"); // ✅ Redirect if not logged in
-          return;
-        }
-
-        // ✅ Correct API call - no need for additional filtering
-        const response = await axios.get(`http://localhost:7000/api/cart/orders/${userId}`);
-        setOrders(response.data); // ✅ Directly set response data
-        setLoading(false);
-      } catch (error) {
-        console.error("❌ Error fetching orders:", error);
-        setLoading(false);
+    const loadOrders = async () => {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        navigate("/login");
+        return;
       }
+      const data = await fetchUserOrders(userId);
+      setOrders(data);
+      setLoading(false);
     };
 
-    fetchOrders();
+    loadOrders();
   }, [navigate]);
 
   return (
@@ -39,21 +33,21 @@ const Orders = () => {
         <div>
           {orders.map((order) => (
             <div key={order._id} className="border p-4 rounded-lg mb-4 shadow-sm">
-              <h3 className="text-lg font-semibold">Order ID: {order._id}</h3>
+              <h3 className="text-lg font-semibold">🆔 Order ID: {order._id}</h3>
               <p className="text-gray-600">📅 Booking Date: {new Date(order.createdAt).toLocaleString()}</p>
 
               <ul className="mt-2">
                 {order.movies.map((movie) => (
                   <li key={movie.movieId} className="flex justify-between py-2 border-b">
                     <span>{movie.title} (x{movie.quantity})</span>
-                    <span className="font-bold">₹{movie.price}</span>
+                    <span className="font-bold">₹{movie.price * movie.quantity}</span>
                   </li>
                 ))}
               </ul>
 
               <div className="text-lg font-semibold mt-3 flex justify-between">
                 <span>Total Price:</span>
-                <span>₹{order.movies.reduce((sum, movie) => sum + movie.price, 0)}</span>
+                <span>₹{order.movies.reduce((sum, movie) => sum + movie.price * movie.quantity, 0)}</span>
               </div>
 
               <div className="mt-2">
@@ -70,7 +64,6 @@ const Orders = () => {
         <p className="text-center text-gray-500">No previous orders found.</p>
       )}
 
-      {/* ✅ Back to Dashboard Button */}
       <div className="flex justify-center mt-6">
         <button
           onClick={() => navigate("/dashboard")}

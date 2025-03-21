@@ -1,54 +1,41 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Menu, X, Users, Film, BarChart2, LogOut } from "lucide-react";
 import UserList from "../component/UserList";
-import MovieList from "../component/MovieList"; // ✅ Import MovieList Component
+import MovieList from "../component/MovieList";
+import { fetchMovieCount, fetchTotalRevenue, fetchUserCount } from "../api/adminApi";
 
-const Admindashboard = () => {
+
+const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [stats, setStats] = useState({ totalUsers: 0, totalMovies: 0, totalRevenue: 0 });
   const [view, setView] = useState("dashboard"); // Track selected view
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const loadStats = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
           navigate("/login"); // ✅ Redirect if no token
           return;
         }
-  
-        // ✅ Fetch User Count
-        const userResponse = await axios.get("http://localhost:7000/api/users/count", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
-        // ✅ Fetch Movie Count
-        const movieResponse = await axios.get("http://localhost:7000/api/movies/moviecount", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
-        // ✅ Fetch Total Revenue
-        const revenueResponse = await axios.get("http://localhost:7000/api/users/total-revenue", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
-        setStats({
-          totalUsers: userResponse.data.totalUsers,
-          totalMovies: movieResponse.data.totalMovies,
-          totalRevenue: revenueResponse.data.totalRevenue, // ✅ Update revenue
-        });
-  
+
+        // ✅ Fetch Stats using Centralized API
+        const [totalUsers, totalMovies, totalRevenue] = await Promise.all([
+          fetchUserCount(),
+          fetchMovieCount(),
+          fetchTotalRevenue(),
+        ]);
+
+        setStats({ totalUsers, totalMovies, totalRevenue });
       } catch (error) {
-        console.error("❌ Error fetching stats:", error);
+        console.error(error);
       }
     };
-  
-    fetchStats();
+
+    loadStats();
   }, []);
-  
 
   // ✅ Logout Function
   const handleLogout = () => {
@@ -125,4 +112,4 @@ const Admindashboard = () => {
   );
 };
 
-export default Admindashboard;
+export default AdminDashboard;

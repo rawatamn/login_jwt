@@ -41,20 +41,19 @@ const UserList = () => {
     try {
       setIsSaving(true);
       setErrorMessage("");
-
-      const updatedUser = await updateUser(editUserId, formData);
-
-      setUsers(users.map(user =>
-        user._id === editUserId ? { ...user, ...updatedUser } : user
-      ));
-
-      setEditUserId(null);
+  
+      await updateUser(editUserId, formData); // ✅ Perform the update request
+      const usersData = await fetchUsers();  // ✅ Fetch updated user list
+  
+      setUsers(usersData); // ✅ Update state with fresh data
+      setEditUserId(null); // ✅ Exit edit mode
     } catch (error) {
       setErrorMessage("Something went wrong. Please try again.");
     } finally {
       setIsSaving(false);
     }
   };
+  
 
   // ✅ Delete User
   const handleDelete = async (userId) => {

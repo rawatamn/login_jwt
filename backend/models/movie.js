@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 const movieSchema = new mongoose.Schema({
   title: { type: String, required: true },
   overview: { type: String, required: true },

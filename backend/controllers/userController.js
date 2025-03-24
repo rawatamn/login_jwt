@@ -1,14 +1,14 @@
-const userService = require("../services/userService");
+import {getLoggedInUsers,getAllUser,createUsers,updateUsers,deleteUsers,calculateTotalRevenues,countUser} from "../services/userService.js"; // ✅ Add `.js` extension
 
 // ✅ Fetch Logged-in User
-exports.getLoggedInUser = async (req, res) => {
+export const getLoggedInUser = async (req, res) => {
   try {
     console.log("🔹 Extracted User ID from Token:", req.user.id);
     if (!req.user.id) {
       return res.status(400).json({ message: "User ID is missing from request" });
     }
 
-    const user = await userService.getLoggedInUser(req.user.id);
+    const user = await getLoggedInUsers(req.user.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -21,14 +21,13 @@ exports.getLoggedInUser = async (req, res) => {
   }
 };
 
-
 // ✅ Fetch All Users (Superadmin Only)
-exports.getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
     if (req.user.role !== "superadmin") {
       return res.status(403).json({ message: "Access denied. Superadmins only." });
     }
-    const users = await userService.getAllUsers();
+    const users = await getAllUser();
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Error fetching users", error });
@@ -36,13 +35,13 @@ exports.getAllUsers = async (req, res) => {
 };
 
 // ✅ Create New User (Superadmin Only)
-exports.createUser = async (req, res) => {
+export const createUser = async (req, res) => {
   try {
     if (req.user.role !== "superadmin") {
       return res.status(403).json({ message: "Access denied. Superadmins only." });
     }
 
-    const newUser = await userService.createUser(req.body, req.user.username);
+    const newUser = await createUsers(req.body, req.user.username);
     res.status(201).json({ message: "User created successfully", newUser });
   } catch (error) {
     res.status(500).json({ message: "Error creating user", error });
@@ -50,11 +49,11 @@ exports.createUser = async (req, res) => {
 };
 
 // ✅ Update User (Superadmin Only)
-exports.updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
   try {
     console.log("🔹 Received update request for User ID:", req.params.id);
     console.log("🔹 Update Data:", req.body);
-    console.log("🔹 Updated By (User ID):", req.user.id); // ✅ Fix: Use `req.user.id`
+    console.log("🔹 Updated By (User ID):", req.user.id);
 
     if (!req.user || !req.user.id) {
       console.log("❌ Updated By (User ID) is missing");
@@ -66,8 +65,7 @@ exports.updateUser = async (req, res) => {
       return res.status(403).json({ message: "Access denied. Superadmins only." });
     }
 
-    // ✅ Pass `req.user.id` instead of `req.user._id`
-    const result = await userService.updateUser(req.params.id, req.body, req.user.id);
+    const result = await updateUsers(req.params.id, req.body, req.user.id);
 
     if (result.error) {
       console.log("❌ Error in updateUser service:", result.error);
@@ -83,16 +81,14 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-
-
 // ✅ Delete User (Superadmin Only)
-exports.deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     if (req.user.role !== "superadmin") {
       return res.status(403).json({ message: "Access denied. Superadmins only." });
     }
 
-    const deletedUser = await userService.deleteUser(req.params.id);
+    const deletedUser = await deleteUsers(req.params.id);
 
     if (!deletedUser) {
       return res.status(404).json({ message: "User not found" });
@@ -103,18 +99,22 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: "Error deleting user", error });
   }
 };
-exports.getUserCount = async (req, res) => {
+
+// ✅ Get User Count
+export const getUserCount = async (req, res) => {
   try {
-    const totalUsers = await userService.countUsers();
+    const totalUsers = await countUser();
     res.status(200).json({ totalUsers });
   } catch (error) {
     res.status(500).json({ message: "Error fetching user count", error });
   }
 };
-exports.getTotalRevenue = async (req, res) => {
+
+// ✅ Get Total Revenue
+export const getTotalRevenue = async (req, res) => {
   try {
     console.log("🔹 Fetching total revenue...");
-    const totalRevenue = await userService.calculateTotalRevenue();
+    const totalRevenue = await calculateTotalRevenues();
     console.log("✅ Total Revenue:", totalRevenue);
     res.status(200).json({ totalRevenue });
   } catch (error) {

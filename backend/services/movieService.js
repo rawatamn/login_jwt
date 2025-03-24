@@ -1,59 +1,58 @@
-const Movie = require("../models/movie");
-const mongoose = require("mongoose");
+import Movie from "../models/movie.js"; // ✅ Add `.js`
+import mongoose from "mongoose";
 
 // ✅ Fetch all movies
-exports.getAllMovies = async () => {
+export const getAllMovie = async () => {
   return await Movie.find();
 };
 
 // ✅ Search movies using regex
-exports.searchMovies = async (query) => {
+export const searchMovie = async (query) => {
   return await Movie.find({
     title: { $regex: new RegExp(query, "i") }
   });
 };
 
 // ✅ Get a movie by ID with validation
-exports.getMovieById = async (id) => {
+export const getMovieByIds = async (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error("Invalid movie ID format");
   }
   return await Movie.findById(id);
 };
-//creating a new movie
-exports.createMovie = async (movieData) => {
+
+// ✅ Create a new movie
+export const createMovies = async (movieData) => {
   const newMovie = new Movie({
     _id: new mongoose.Types.ObjectId().toString(), // ✅ Generate a 24-character ID
     ...movieData,
   });
-    return await newMovie.save();
-  };
-  exports.updateMovie = async (id, movieData) => {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid movie ID format");
-    }
-  
-    return await Movie.findByIdAndUpdate(id, movieData, { new: true });
-  };
+  return await newMovie.save();
+};
 
-  //delete a movie 
- // In movieService.js
-exports.deleteMovieById = async (id) => {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid movie ID format");
-    }
-  
-    // Use `findByIdAndDelete` to delete the movie
-    const deletedMovie = await Movie.findByIdAndDelete(id);
-  
-    if (!deletedMovie) {
-      throw new Error("Movie not found");
-    }
-  
-    return deletedMovie;
-  };
-  exports.countMovies = async () => {
-    return await Movie.countDocuments();
-  };
-  
-  
+// ✅ Update a movie
+export const updateMovies = async (id, movieData) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error("Invalid movie ID format");
+  }
+  return await Movie.findByIdAndUpdate(id, movieData, { new: true });
+};
+
+// ✅ Delete a movie by ID
+export const deleteMovieByIds = async (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error("Invalid movie ID format");
+  }
+
+  const deletedMovie = await Movie.findByIdAndDelete(id);
+  if (!deletedMovie) {
+    throw new Error("Movie not found");
+  }
+
+  return deletedMovie;
+};
+
+// ✅ Count total movies
+export const countMovie = async () => {
+  return await Movie.countDocuments();
+};

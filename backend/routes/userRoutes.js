@@ -1,14 +1,17 @@
-const express = require("express");
+import express from "express";
+import { createUser, deleteUser, getAllUsers, getLoggedInUser, getTotalRevenue, getUserCount, updateUser } from "../controllers/userController.js"; // ✅ Add `.js`
+import verifyToken from "../middleware/authMiddleware.js"; // ✅ Add `.js`
+
+
 const router = express.Router();
-const userController = require("../controllers/userController");
-const verifyToken = require("../middleware/authMiddleware");
 
 // ✅ Define Routes
-router.get("/me", verifyToken, userController.getLoggedInUser);
-router.get("/", verifyToken, userController.getAllUsers);
-router.post("/", verifyToken, userController.createUser);
-router.put("/:id", verifyToken, userController.updateUser);
-router.delete("/:id", verifyToken, userController.deleteUser);
-router.get("/count", verifyToken, userController.getUserCount);
-router.get("/total-revenue", verifyToken, userController.getTotalRevenue);
-module.exports = router;
+router.get("/me", verifyToken, getLoggedInUser);
+router.get("/", verifyToken, getAllUsers);
+router.post("/", verifyToken, createUser);
+router.put("/:id", verifyToken, updateUser);
+router.delete("/:id", verifyToken, deleteUser);
+router.get("/count", verifyToken, getUserCount);
+router.get("/total-revenue", verifyToken, getTotalRevenue);
+
+export default router;

@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const crypto = require("crypto"); // Import crypto for unique ID generation
+import mongoose from "mongoose";
+import crypto from "crypto"; // Import crypto for unique ID generation
 
 const movieSchema = new mongoose.Schema({
   _id: { 
@@ -16,4 +16,5 @@ const movieSchema = new mongoose.Schema({
 });
 
 const Movie = mongoose.model("Movie", movieSchema);
-module.exports = Movie;
+
+export default Movie;

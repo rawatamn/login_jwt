@@ -1,13 +1,12 @@
-require("dotenv").config();
-const express = require("express");
-const connectDB = require("./config/db");
-const cors = require("cors");
-const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
-const movieRoutes = require("./routes/moviesRoutes");
-const createSuperadmin = require("./utilities/createSuperadmin"); // ✅ Import Superadmin Creator
-
-
+import "dotenv/config"; // ✅ Loads .env variables
+import express from "express";
+import cors from "cors";
+import connectDB from "./config/db.js"; // ✅ Add `.js` extension
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js"; 
+import movieRoutes from "./routes/moviesRoutes.js"; 
+import cartroutes from "./routes/cartroutes.js"
+import createSuperadmin from "./utilities/createSuperadmin.js";
 const app = express();
 
 // ✅ Enable CORS before routes
@@ -24,7 +23,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/movies", movieRoutes); // ✅ Keep routes after CORS
-app.use("/api/cart", require("./routes/cartroutes"));
+app.use("/api/cart", cartroutes);
 
 // ✅ Test Route
 app.get("/", (req, res) => {

@@ -30,4 +30,4 @@ const Messages = Object.freeze({
     }
 });
 
-module.exports = Messages;
+export default Messages;

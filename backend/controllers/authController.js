@@ -1,11 +1,11 @@
-const bcrypt = require("bcryptjs");
-const User = require("../models/user");
-const Messages = require("../utilities/message");
-const APIResponse = require("../utilities/apiresponse");
-const TokenHandler = require("../utilities/tokengenerator");
+import bcrypt from "bcryptjs";
+import User from "../models/user.js"; // ✅ Add `.js` extension
+import Messages from "../utilities/message.js";
+import APIResponse from "../utilities/apiresponse.js";
+import TokenHandler from "../utilities/tokengenerator.js";
 
 // ✅ Register Function
-const register = async (req, res) => {
+export const register = async (req, res) => {
     try {
         const { username, useremail, password, role } = req.body;
 
@@ -51,7 +51,7 @@ const register = async (req, res) => {
 };
 
 // ✅ Login Function
-const login = async (req, res) => {
+export const login = async (req, res) => {
     try {
         const { useremail, password } = req.body;
         const user = await User.findOne({ useremail });
@@ -94,5 +94,3 @@ const login = async (req, res) => {
         });
     }
 };
-
-module.exports = { register, login };

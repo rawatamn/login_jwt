@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const { customAlphabet } = require("nanoid");
+import mongoose from "mongoose";
+import { customAlphabet } from "nanoid";
 
 // ✅ Generate a default `userId` (10-character alphanumeric)
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10);
@@ -40,4 +40,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+export default User;

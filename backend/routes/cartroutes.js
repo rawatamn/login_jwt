@@ -1,6 +1,7 @@
-const express = require("express");
+import express from "express";
+import Cart from "../models/cart.js"; // ✅ Add `.js`
+
 const router = express.Router();
-const Cart = require("../models/cart");
 
 // ✅ Add Movie to Cart
 router.post("/", async (req, res) => {
@@ -8,7 +9,6 @@ router.post("/", async (req, res) => {
     console.log("Incoming Request:", req.body);
 
     const { userId, movieId, title, price, quantity } = req.body;
-
     let cart = await Cart.findOne({ userId });
 
     if (cart) {
@@ -35,7 +35,33 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 });
+router.post("/initiate-payment", async (req, res) => {
+  try {
+    console.log("✅ Initiating payment...");
+    const { userId } = req.body;
 
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    // ✅ Ensure payment is still pending
+    if (cart.paymentStatus === "successful") {
+      cart.paymentStatus = "pending"; 
+      await cart.save();
+    }
+
+    res.status(200).json({ message: "Payment initiated successfully", cart });
+  } catch (error) {
+    console.error("❌ Error initiating payment:", error);
+    res.status(500).json({ message: "Server Error", error });
+  }
+});
 
 
 // ✅ Update Movie Quantity in Cart
@@ -94,6 +120,7 @@ router.delete("/:userId/:movieId", async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 });
+
 // ✅ Confirm Payment Route
 router.post("/confirm-payment", async (req, res) => {
   try {
@@ -120,6 +147,8 @@ router.post("/confirm-payment", async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 });
+
+// ✅ Get Successful Orders
 router.get("/orders/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -134,6 +163,4 @@ router.get("/orders/:userId", async (req, res) => {
   }
 });
 
-
-
-module.exports = router;
+export default router;

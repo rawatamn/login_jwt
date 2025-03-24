@@ -1,9 +1,11 @@
-require("dotenv").config();
-const bcrypt = require("bcryptjs");
-const User = require("../models/user");
+import "dotenv/config";
+import bcrypt from "bcryptjs";
+import User from "../models/user.js";
 
 const createSuperadmin = async () => {
   try {
+    console.log("🔹 Checking for existing Superadmin...");
+
     const superadminExists = await User.findOne({ role: "superadmin" });
 
     if (!superadminExists) {
@@ -19,11 +21,11 @@ const createSuperadmin = async () => {
       await superadmin.save();
       console.log("✅ Superadmin created successfully");
     } else {
-      console.log("✅ Superadmin already exists");
+      console.log("✅ Superadmin already exists.");
     }
   } catch (error) {
     console.error("❌ Error creating superadmin:", error);
   }
 };
 
-module.exports = createSuperadmin;
+export default createSuperadmin;

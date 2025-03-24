@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const CartSchema = new mongoose.Schema({
   userId: { type: String, required: true }, // ✅ Changed from ObjectId to String
@@ -23,4 +23,5 @@ const CartSchema = new mongoose.Schema({
 });
 
 const Cart = mongoose.model("Cart", CartSchema, "carts"); // ✅ Force collection name
-module.exports = Cart;
+
+export default Cart;

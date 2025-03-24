@@ -1,9 +1,9 @@
-const User = require("../models/user");
-const Messages = require("../utilities/message");
-const APIResponse = require("../utilities/apiresponse");
-const TokenHandler = require("../utilities/tokengenerator");
+import User from "../models/user.js"; // ✅ Add `.js` extension
+import Messages from "../utilities/message.js";
+import APIResponse from "../utilities/apiresponse.js";
+import TokenHandler from "../utilities/tokengenerator.js";
 
-const verifyToken = async (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
     try {
         console.log("🔹 Verifying Token...");
 
@@ -62,6 +62,4 @@ const verifyToken = async (req, res, next) => {
     }
 };
 
-module.exports = verifyToken;
-
-
+export default verifyToken;

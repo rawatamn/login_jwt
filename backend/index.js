@@ -1,4 +1,4 @@
-import "dotenv/config"; // ✅ Load .env variables
+import "dotenv/config"; 
 import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js"; 
@@ -10,12 +10,14 @@ import createSuperadmin from "./utilities/createSuperadmin.js";
 
 const app = express();
 
-// ✅ Enable CORS before routes
+// ✅ Correct CORS Middleware
 app.use(cors({
-  origin: ["http://localhost:5173", "https://login-jwt-3xz9.vercel.app/"],
-  methods: "GET,POST,PUT,DELETE",
-  allowedHeaders: "Content-Type,Authorization"
+  origin: ["http://localhost:5173", "https://login-jwt-3xz9.vercel.app"], 
+  methods: "GET, POST, PUT, DELETE",
+  allowedHeaders: "Content-Type, Authorization",
+  credentials: true
 }));
+
 
 // ✅ JSON Middleware
 app.use(express.json());

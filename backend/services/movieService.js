@@ -24,8 +24,8 @@ export const getMovieByIds = async (id) => {
 // ✅ Create a new movie
 export const createMovies = async (movieData) => {
   const newMovie = new Movie({
-    _id: new mongoose.Types.ObjectId().toString(), // ✅ Generate a 24-character ID
     ...movieData,
+    _id: crypto.randomBytes(12).toString("hex"), // ✅ Ensure consistent 24-character string ID
   });
   return await newMovie.save();
 };

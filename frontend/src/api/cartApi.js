@@ -1,10 +1,10 @@
 import axiosInstance from "../utils/axiosInstance";
-
+import { API } from "../utils/apiRoutes";
 // ✅ Fetch Cart Data
 export const getCartData = async (userId) => {
   if (!userId) return [];
   try {
-    const response = await axiosInstance.get(`/api/cart/${userId}`);
+    const response = await axiosInstance.get(`${API.CART}/${userId}`);
     return response.data?.movies || [];
   } catch (error) {
     console.error("❌ Error fetching cart:", error.response?.data || error.message);
@@ -16,7 +16,7 @@ export const getCartData = async (userId) => {
 export const addMovieToCart = async (userId, movie) => {
   if (!userId) return;
   try {
-    await axiosInstance.post("/api/cart", {
+    await axiosInstance.post(API.CART, {
       userId,
       movieId: movie._id,
       title: movie.title,
@@ -32,7 +32,7 @@ export const addMovieToCart = async (userId, movie) => {
 export const removeMovieFromCart = async (userId, movieId) => {
   if (!userId) return;
   try {
-    await axiosInstance.delete(`/api/cart/${userId}/${movieId}`);
+    await axiosInstance.delete(`${API.CART}/${userId}/${movieId}`);
   } catch (error) {
     console.error("❌ Error removing from cart:", error.response?.data || error.message);
   }

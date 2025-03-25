@@ -14,7 +14,7 @@ export const register = async (req, res) => {
         if (user) {
             return APIResponse.error(res, {
                 status: 400,
-                message: "User already exists",
+                message: Messages.AUTH.USER_ALREADY_EXISTS,
             });
         }
 
@@ -37,14 +37,14 @@ export const register = async (req, res) => {
 
         return APIResponse.success(res, {
             status: 201,
-            message: "User registered successfully",
+            message: Messages.USER.SIGNUP_SUCCESS,
             data: { token, username: user.username, role: user.role },
         });
     } catch (err) {
         console.error("Registration error:", err);
         return APIResponse.error(res, {
             status: 500,
-            message: "Internal server error",
+            message:Messages.MOVIE.SERVER,
             error: err.message,
         });
     }

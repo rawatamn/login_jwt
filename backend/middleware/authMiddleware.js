@@ -28,7 +28,7 @@ export const verifyToken = async (req, res, next) => {
             return APIResponse.error(res, {
                 status: 401,
                 message: Messages.AUTH.TOKEN_INVALID,
-                error: "Invalid or expired token"
+                error:Messages.AUTH.TOKEN_INVALID
             });
         }
 
@@ -38,7 +38,7 @@ export const verifyToken = async (req, res, next) => {
             console.log("❌ User not found in DB for ID:", decoded.id);
             return APIResponse.error(res, {
                 status: 404,
-                message: "User not found",
+                message: Messages.USER.NOT_FOUND,
                 error: ""
             });
         }
@@ -56,7 +56,7 @@ export const verifyToken = async (req, res, next) => {
         console.error("❌ Authentication Error:", error);
         return APIResponse.error(res, {
             status: 500,
-            message: "Authentication failed",
+            message: Messages.AUTH.AUTHENTICATION,
             error: error.message
         });
     }

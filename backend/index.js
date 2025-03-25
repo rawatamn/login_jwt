@@ -7,7 +7,7 @@ import userRoutes from "./routes/userRoutes.js";
 import movieRoutes from "./routes/moviesRoutes.js"; 
 import cartRoutes from "./routes/cartroutes.js";
 import createSuperadmin from "./utilities/createSuperadmin.js";
-
+import { API } from "./utilities/apiRoutes.js";
 const app = express();
 
 // ✅ Correct CORS Middleware
@@ -23,10 +23,10 @@ app.use(cors({
 app.use(express.json());
 
 // ✅ Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/movies", movieRoutes);
-app.use("/api/cart", cartRoutes);
+app.use(API.AUTH, authRoutes);
+app.use(API.USER, userRoutes);
+app.use(API.MOVIE, movieRoutes);
+app.use(API.CART, cartRoutes);
 
 // ✅ Test Route
 app.get("/", (req, res) => {

@@ -1,12 +1,12 @@
 import axiosInstance from "../utils/axiosInstance";
-
+import { API } from "../utils/apiRoutes";
 // ✅ Fetch logged-in user details
 export const fetchUser = async () => {
   try {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No token found. Please log in.");
 
-    const response = await axiosInstance.get("/api/users/me", {
+    const response = await axiosInstance.get(`${API.USERS}/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -19,7 +19,7 @@ export const fetchUser = async () => {
 };
 export const getUserData = async (token) => {
     try {
-      const response = await axiosInstance.get("/api/users/me", {
+      const response = await axiosInstance.get(`${API.USERS}/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -32,7 +32,7 @@ export const getUserData = async (token) => {
   // ✅ Search movies by query
   export const searchMovies = async (query) => {
     try {
-      const response = await axiosInstance.get(`/api/movies/search?q=${query}`);
+      const response = await axiosInstance.get(`${API.MOVIES}${API.MOVIE_SEARCH}?q=${query}`);
       return response.data;
     } catch (error) {
       console.error("❌ Error searching movies:", error);

@@ -2,7 +2,7 @@ import User from "../models/user.js";
 import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 import Cart from "../models/cart.js";
-
+import Messages from "../utilities/message.js";
 // ✅ Fetch logged-in user
 export const getLoggedInUsers = async (userId) => {
   return await User.findById(userId).select("-password");
@@ -20,7 +20,7 @@ export const createUsers = async (userData, createdBy) => {
   // Check if email already exists
   const existingUsers = await User.findOne({ useremail });
   if (existingUsers) {
-    throw new Error("Email already exists. Please use a different email.");
+    throw new Error(Messages.USER.EMAIL_EXISTS);
   }
 
   // Create new user with Nano ID
@@ -45,14 +45,14 @@ export const updateUsers = async (userId, updateData, updatedBy) => {
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       console.log("❌ Invalid user ID format:", userId);
-      return { error: "Invalid user ID format" };
+      return { error: Messages.VALIDATION.INVALID_INPUT };
     }
 
     if (updateData.useremail) {
       const existingUser = await User.findOne({ useremail: updateData.useremail });
       if (existingUser && existingUser._id.toString() !== userId) {
         console.log("❌ Email already exists:", updateData.useremail);
-        return { error: "Email already exists. Please use a different email." };
+        return { error: Messages.USER.EMAIL_EXISTS};
       }
     }
 
@@ -68,7 +68,7 @@ export const updateUsers = async (userId, updateData, updatedBy) => {
 
     if (!updatedUsers) {
       console.log("❌ User not found with ID:", userId);
-      return { error: "User not found" };
+      return { error: Messages.USER.Not_Found };
     }
 
     console.log("✅ Updated User Successfully:", updatedUsers);
@@ -80,14 +80,14 @@ export const updateUsers = async (userId, updateData, updatedBy) => {
 
   } catch (error) {
     console.error("❌ Error in updateUser service:", error);
-    return { error: "An unexpected error occurred." };
+    return { error: Messages.ERROR.UNKNOWN_ERROR};
   }
 };
 
 // ✅ Delete a user
 export const deleteUsers = async (userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId) && userId.length !== 10) {
-    throw new Error("Invalid user ID format");
+    throw new Error(Messages.VALIDATION.INVALID_INPUT);
   }
   return await User.findByIdAndDelete(userId);
 };
@@ -127,6 +127,6 @@ export const calculateTotalRevenues = async () => {
 
   } catch (error) {
     console.error("❌ Error in calculateTotalRevenue:", error);
-    throw new Error(error.message || "Error calculating total revenue");
+    throw new Error(error.message || Messages.Revenue.Total_Revenue);
   }
 };

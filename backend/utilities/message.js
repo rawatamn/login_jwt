@@ -19,6 +19,7 @@ const Messages = Object.freeze({
         DELETED: "User deleted successfully",
         ERROR_DELETE: "Error deleting user",
         ERROR_COUNT: "Error fetching user count",
+        INCORRECT_PASSWORD:"Password is incorrect",
     },
     MOVIE: {
         MOVIE_NOT_FOUND: "Movie not found",
@@ -82,6 +83,9 @@ const Messages = Object.freeze({
     PAYMENT: {
         INITIATED: "Payment initiated successfully",
         CONFIRMED: "Payment confirmed successfully",
+    },
+    MONGODB:{
+        MONGODB_ERROR:"Mongodb connection error"
     }
 });
 

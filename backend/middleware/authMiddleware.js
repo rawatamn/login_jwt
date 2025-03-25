@@ -5,11 +5,11 @@ import TokenHandler from "../utilities/tokengenerator.js";
 
 export const verifyToken = async (req, res, next) => {
     try {
-        console.log("🔹 Verifying Token...");
+       
 
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            console.log("❌ No Authorization Header Found");
+           
             return APIResponse.error(res, {
                 status: 401,
                 message: Messages.AUTH.TOKEN_MISSING,
@@ -21,10 +21,10 @@ export const verifyToken = async (req, res, next) => {
 
         // ✅ Verify Token
         const decoded = TokenHandler.verifyToken(token);
-        console.log("🔍 Decoded Token:", decoded);
+       
 
         if (!decoded || !decoded.id) {
-            console.log("❌ Token verification failed or missing user ID");
+            
             return APIResponse.error(res, {
                 status: 401,
                 message: Messages.AUTH.TOKEN_INVALID,
@@ -35,7 +35,7 @@ export const verifyToken = async (req, res, next) => {
         // ✅ Fetch the user from the database
         const user = await User.findById(decoded.id);
         if (!user) {
-            console.log("❌ User not found in DB for ID:", decoded.id);
+           
             return APIResponse.error(res, {
                 status: 404,
                 message: Messages.USER.NOT_FOUND,
@@ -50,7 +50,7 @@ export const verifyToken = async (req, res, next) => {
             username: user.username
         };
 
-        console.log("✅ User Authenticated:", req.user);
+       
         next();
     } catch (error) {
         console.error("❌ Authentication Error:", error);

@@ -4,11 +4,12 @@ import * as Yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { loginUser } from "../api/authApi";
- // ✅ Import login API function
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // ✅ Import Eye Icons
 
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // ✅ State to toggle password
 
   // ✅ Validation Schema
   const validationSchema = Yup.object({
@@ -22,27 +23,23 @@ const Login = () => {
     onSubmit: async (values, { setErrors }) => {
       setLoading(true);
       try {
-        const data = await loginUser(values); // ✅ Call API function
-        console.log("🔍 Server Response:", data);
+        const data = await loginUser(values);
+       
 
         if (!data.data.token) {
           throw new Error("No token received from server.");
         }
 
         const { token, role } = data.data;
+        const decoded = JSON.parse(atob(token.split(".")[1]));
+      
 
-        // ✅ Decode JWT Token to get userId
-        const decoded = JSON.parse(atob(token.split(".")[1])); 
-        console.log("Decoded Token:", decoded);
-
-        // ✅ Store token, role, and userId in localStorage
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
         localStorage.setItem("userId", decoded.id);
 
-        console.log("Stored userId:", decoded.id);
+       
 
-        // ✅ Redirect based on role
         navigate(role === "admin" ? "/admindashboard" : "/dashboard");
       } catch (error) {
         setErrors({ general: error.response?.data?.message || "Login failed" });
@@ -61,7 +58,6 @@ const Login = () => {
       >
         <h2 className="text-3xl font-extrabold text-white text-center mb-6">Welcome Back</h2>
 
-        {/* ✅ Show Error Messages */}
         {formik.errors.general && (
           <p className="text-red-300 text-sm text-center mb-3">{formik.errors.general}</p>
         )}
@@ -80,14 +76,23 @@ const Login = () => {
             )}
           </div>
 
-          {/* Password Input */}
+          {/* Password Input with Eye Icon */}
           <div className="relative">
             <input
               {...formik.getFieldProps("password")}
-              type="password"
+              type={showPassword ? "text" : "password"} // ✅ Toggle password visibility
               placeholder="Password"
               className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-lg focus:ring-2 focus:ring-white text-white placeholder-white transition-all duration-300"
             />
+            {/* ✅ Eye Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-3 flex items-center text-white"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+
             {formik.touched.password && formik.errors.password && (
               <p className="text-red-300 text-sm mt-1">{formik.errors.password}</p>
             )}
@@ -104,7 +109,6 @@ const Login = () => {
           </motion.button>
         </form>
 
-        {/* ✅ "Don't have an account? Register" Link */}
         <p className="mt-6 text-center text-white text-lg">
           Don't have an account?{" "}
           <Link

@@ -10,7 +10,7 @@ export const fetchUser = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    console.log("✅ User Data:", response.data);
+   
     return response.data;
   } catch (error) {
     console.error("❌ Failed to fetch user data:", error.response?.data || error.message);

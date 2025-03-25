@@ -5,7 +5,7 @@ function ProtectedRoute({ allowedRoles }) {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("role");
 
-  console.log("🔍 Checking ProtectedRoute:", { token, userRole });
+ 
 
   if (!token) {
     console.warn("⚠️ No token found, redirecting to login...");

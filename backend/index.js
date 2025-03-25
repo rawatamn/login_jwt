@@ -36,7 +36,7 @@ app.get("/", (req, res) => {
 // ✅ Connect to Database
 connectDB().then(() => {
   createSuperadmin(); // ✅ Call Superadmin Creation
-  console.log("🚀 Database Connected!");
+  
 });
 
 // ✅ Export Express App for Vercel

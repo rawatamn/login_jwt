@@ -36,12 +36,12 @@ export const searchMovies = async (req, res) => {
 export const getMovieById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("🔍 Requested Movie ID:", id);
+  
 
     const movie = await getMovieByIds(id);
 
     if (!movie) {
-      console.log("Movie not found:", id);
+     
       return res.status(404).json({ message: Messages.MOVIE.MOVIE_NOT_FOUND});
     }
 
@@ -88,7 +88,7 @@ export const updateMovie = async (req, res) => {
 export const deleteMovie = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Deleting movie with ID:", id); // Log the ID for debugging
+    
     const movie = await deleteMovieByIds(id);
 
     if (!movie) {

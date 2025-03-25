@@ -39,19 +39,16 @@ export const createUsers = async (userData, createdBy) => {
 // ✅ Update an existing user
 export const updateUsers = async (userId, updateData, updatedBy) => {
   try {
-    console.log("🔹 Updating User:", userId);
-    console.log("🔹 Update Data:", updateData);
-    console.log("🔹 Updated By:", updatedBy);
-
+   
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      console.log("❌ Invalid user ID format:", userId);
+     
       return { error: Messages.VALIDATION.INVALID_INPUT };
     }
 
     if (updateData.useremail) {
       const existingUser = await User.findOne({ useremail: updateData.useremail });
       if (existingUser && existingUser._id.toString() !== userId) {
-        console.log("❌ Email already exists:", updateData.useremail);
+       
         return { error: Messages.USER.EMAIL_EXISTS};
       }
     }
@@ -67,11 +64,11 @@ export const updateUsers = async (userId, updateData, updatedBy) => {
     );
 
     if (!updatedUsers) {
-      console.log("❌ User not found with ID:", userId);
+      
       return { error: Messages.USER.Not_Found };
     }
 
-    console.log("✅ Updated User Successfully:", updatedUsers);
+    
     return {
       ...updatedUsers.toObject(),
       createdAt: updatedUsers.createdAt.getTime(),
@@ -100,21 +97,21 @@ export const countUser = async () => {
 // ✅ Calculate total revenue
 export const calculateTotalRevenues = async () => {
   try {
-    console.log("🔹 Fetching successful orders...");
+   
 
     // Fetch orders with successful payments
     const successfulOrders = await Cart.find({ paymentStatus: "successful" });
 
-    console.log("✅ Successful Orders:", successfulOrders.length);
+    
 
     if (!successfulOrders || successfulOrders.length === 0) {
-      console.log("⚠️ No successful orders found.");
+      
       return 0;
     }
 
     // Calculate total revenue
     const totalRevenue = successfulOrders.reduce((total, order) => {
-      console.log("🛒 Processing Order:", order);
+     
       const orderTotal = order.movies.reduce((sum, movie) => {
         return sum + (movie.price * movie.quantity);
       }, 0);
@@ -122,7 +119,7 @@ export const calculateTotalRevenues = async () => {
       return total + orderTotal;
     }, 0);
 
-    console.log("💰 Total Revenue Calculated:", totalRevenue);
+    
     return totalRevenue;
 
   } catch (error) {

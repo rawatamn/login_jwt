@@ -4,7 +4,7 @@ import User from "../models/user.js";
 
 const createSuperadmin = async () => {
   try {
-    console.log("🔹 Checking for existing Superadmin...");
+    
 
     const superadminExists = await User.findOne({ role: "superadmin" });
 
@@ -19,9 +19,9 @@ const createSuperadmin = async () => {
       });
 
       await superadmin.save();
-      console.log("✅ Superadmin created successfully");
+      
     } else {
-      console.log("✅ Superadmin already exists.");
+      
     }
   } catch (error) {
     console.error("❌ Error creating superadmin:", error);

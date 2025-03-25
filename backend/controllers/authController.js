@@ -41,7 +41,7 @@ export const register = async (req, res) => {
             data: { token, username: user.username, role: user.role },
         });
     } catch (err) {
-        console.error("Registration error:", err);
+        console.error(Messages.USER.SIGNUP_FAILED, err);
         return APIResponse.error(res, {
             status: 500,
             message:Messages.MOVIE.SERVER,
@@ -69,7 +69,7 @@ export const login = async (req, res) => {
             return APIResponse.error(res, {
                 status: 400,
                 message: Messages.USER.LOGIN_FAILED,
-                error: "Incorrect password",
+                error: Messages.USER.INCORRECT_PASSWORD
             });
         }
 

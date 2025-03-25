@@ -4,11 +4,12 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { registerUser } from "../api/authApi";
- // ✅ Import signup API function
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // ✅ Import Eye Icons
 
 const Signup = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // ✅ State for toggling password visibility
 
   const validationSchema = Yup.object({
     username: Yup.string().min(3, "Must be at least 3 characters").required("Required"),
@@ -39,9 +40,7 @@ const Signup = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="bg-white/20 backdrop-blur-lg p-8 rounded-2xl shadow-xl w-full max-w-sm"
       >
-        <h2 className="text-3xl font-extrabold text-white text-center mb-6">
-          Create Account
-        </h2>
+        <h2 className="text-3xl font-extrabold text-white text-center mb-6">Create Account</h2>
 
         {/* ✅ Show Error Messages */}
         {formik.errors.general && (
@@ -75,14 +74,23 @@ const Signup = () => {
             )}
           </div>
 
-          {/* Password Input */}
+          {/* Password Input with Eye Icon */}
           <div className="relative">
             <input
               {...formik.getFieldProps("password")}
-              type="password"
+              type={showPassword ? "text" : "password"} // ✅ Toggle visibility
               placeholder="Password"
               className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-lg focus:ring-2 focus:ring-white text-white placeholder-white transition-all duration-300"
             />
+            {/* ✅ Eye Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-3 flex items-center text-white"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+
             {formik.touched.password && formik.errors.password && (
               <p className="text-red-300 text-sm mt-1">{formik.errors.password}</p>
             )}

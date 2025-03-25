@@ -18,13 +18,12 @@ const Moviedetail = () => {
   const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
-    console.log("🔍 Movie ID from URL:", id);
-
+  
     const loadMovie = async () => {
       try {
         if (!id) throw new Error("Movie ID is undefined.");
         const data = await fetchMovieById(id);
-        console.log("🟢 Movie Data Fetched:", data);
+        ("🟢 Movie Data Fetched:", data);
         setMovie(data);
       } catch (error) {
         setError(error.message);

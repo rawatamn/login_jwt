@@ -1,9 +1,9 @@
 import axiosInstance from "../utils/axiosInstance"; // ✅ Use centralized Axios instance
-
+import { API } from "../utils/apiRoutes";
 // ✅ Fetch User Count
 export const fetchUserCount = async () => {
   try {
-    const response = await axiosInstance.get("/api/users/count");
+    const response = await axiosInstance.get(`${API.USERS}${API.USER_COUNT}`);
     return response.data.totalUsers;
   } catch (error) {
     console.error("❌ Error fetching user count:", error);
@@ -14,7 +14,7 @@ export const fetchUserCount = async () => {
 // ✅ Fetch Movie Count
 export const fetchMovieCount = async () => {
   try {
-    const response = await axiosInstance.get("/api/movies/moviecount");
+    const response = await axiosInstance.get(`${API.MOVIES}${API.MOVIE_COUNT}`);
     return response.data.totalMovies;
   } catch (error) {
     console.error("❌ Error fetching movie count:", error);
@@ -25,7 +25,7 @@ export const fetchMovieCount = async () => {
 // ✅ Fetch Total Revenue
 export const fetchTotalRevenue = async () => {
   try {
-    const response = await axiosInstance.get("/api/users/total-revenue");
+    const response = await axiosInstance.get(`${API.USERS}${API.TOTAL_REVENUE}`);
     return response.data.totalRevenue;
   } catch (error) {
     console.error("❌ Error fetching total revenue:", error);

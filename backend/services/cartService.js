@@ -2,7 +2,7 @@ import Cart from "../models/cart.js";
 import Messages from "../utilities/message.js";
 
 export const addMovieToCart = async (userId, movieId, title, price, quantity) => {
-    let cart = await Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId,paymentStatus: "pending"});
   
     if (cart) {
       const existingMovie = cart.movies.find((item) => item.movieId === movieId);
@@ -78,6 +78,7 @@ export const addMovieToCart = async (userId, movieId, title, price, quantity) =>
     if (!cart) throw new Error(Messages.CART.NOT_FOUND);
   
     cart.paymentStatus = "successful";
+    cart.movies = [];
     await cart.save();
   
     return cart;

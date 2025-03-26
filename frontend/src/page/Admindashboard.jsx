@@ -4,18 +4,19 @@ import { Menu, X, Users, Film, BarChart2, LogOut } from "lucide-react";
 import UserList from "../component/UserList";
 import MovieList from "../component/MovieList";
 import { fetchMovieCount, fetchTotalRevenue, fetchUserCount } from "../api/adminApi";
-
+import { localStorageUtils } from "../utils/localStorageUtils";
+import { LocalStorageKeys } from "../constants/enums";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [stats, setStats] = useState({ totalUsers: 0, totalMovies: 0, totalRevenue: 0 });
-  const [view, setView] = useState("dashboard"); // Track selected view
+  const [view, setView] = useState("dashboard");
 
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorageUtils.getItem(LocalStorageKeys.TOKEN);
         if (!token) {
           navigate("/login"); // ✅ Redirect if no token
           return;
@@ -39,8 +40,7 @@ const AdminDashboard = () => {
 
   // ✅ Logout Function
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    localStorageUtils.clearStorage(); // ✅ Clears all stored user data
     navigate("/login");
   };
 

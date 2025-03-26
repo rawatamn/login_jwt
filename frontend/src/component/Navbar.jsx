@@ -1,8 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaSearch, FaShoppingCart, FaHistory, FaTimes, FaTrash } from "react-icons/fa";
-import { CartContext } from "../context/CartContext"; 
-import { searchMovies } from "../api/userApi"; // ✅ Import centralized API
+import { CartContext } from "../context/CartContext";
+import { searchMovies } from "../api/userApi";
+import { localStorageUtils } from "../utils/localStorageUtils"; // ✅ Use local storage utils
+import { LocalStorageKeys } from "../constants/enums"; // ✅ Use enums
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -11,11 +13,11 @@ const Navbar = () => {
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const { cart, setCart, removeFromCart } = useContext(CartContext); // ✅ Access cart state
+  const { cart, removeFromCart } = useContext(CartContext);
 
-  // ✅ Fetch username from localStorage
+  // ✅ Fetch username from LocalStorage using Utils
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorageUtils.getItem(LocalStorageKeys.USERNAME);
     if (storedUsername) {
       setUsername(storedUsername);
     }
@@ -24,17 +26,22 @@ const Navbar = () => {
   // ✅ Fetch Movies from Backend with Regex Search
   useEffect(() => {
     const fetchMovies = async () => {
-      if (searchQuery.trim() === "") {
+      if (!searchQuery.trim()) {
         setFilteredMovies([]);
         return;
       }
-  
+
       setLoading(true);
-      const movies = await searchMovies(searchQuery); // ✅ Use centralized API function
-      setFilteredMovies(movies);
-      setLoading(false);
+      try {
+        const movies = await searchMovies(searchQuery);
+        setFilteredMovies(movies);
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-  
+
     if (searchQuery) {
       const timeoutId = setTimeout(fetchMovies, 500);
       return () => clearTimeout(timeoutId);
@@ -43,19 +50,21 @@ const Navbar = () => {
 
   // ✅ Handle Movie Selection (Redirect)
   const handleMovieSelect = (movieId) => {
-    setSearchQuery(""); 
+    setSearchQuery("");
     setFilteredMovies([]);
     navigate(`/movies/${movieId}`);
   };
 
+  // ✅ Handle Logout
+  const handleLogout = () => {
+    localStorageUtils.clearStorage();
+    navigate("/login");
+  };
+
   return (
     <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md relative">
-      
       {/* ✅ Logo */}
-      <span 
-        className="text-3xl font-bold cursor-pointer"
-        onClick={() => navigate("/login")}
-      >
+      <span className="text-3xl font-bold cursor-pointer" onClick={() => navigate("/login")}>
         book<span className="text-red-500">my</span>show
       </span>
 
@@ -79,11 +88,7 @@ const Navbar = () => {
               <p className="p-3 text-gray-500">Loading...</p>
             ) : filteredMovies.length > 0 ? (
               filteredMovies.map((movie) => (
-                <div
-                  key={movie._id}
-                  className="p-3 cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleMovieSelect(movie._id)}
-                >
+                <div key={movie._id} className="p-3 cursor-pointer hover:bg-gray-100" onClick={() => handleMovieSelect(movie._id)}>
                   {movie.title}
                 </div>
               ))
@@ -96,7 +101,6 @@ const Navbar = () => {
 
       {/* ✅ User Info + Cart + Order History */}
       <div className="flex items-center space-x-6">
-        
         {/* ✅ Order History Icon */}
         <div className="relative cursor-pointer" onClick={() => navigate("/orders")}>
           <FaHistory className="text-gray-700 text-2xl" title="Order History" />
@@ -106,9 +110,7 @@ const Navbar = () => {
         <div className="relative cursor-pointer" onClick={() => setIsCartOpen(!isCartOpen)}>
           <FaShoppingCart className="text-gray-700 text-2xl" />
           {cart.length > 0 && (
-            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-              {cart.length}
-            </span>
+            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{cart.length}</span>
           )}
         </div>
 
@@ -116,21 +118,12 @@ const Navbar = () => {
         {username ? (
           <div className="flex items-center space-x-3">
             <span className="font-medium">Hey, {username}</span>
-            <button
-              onClick={() => {
-                localStorage.clear();
-                navigate("/login");
-              }}
-              className="bg-red-500 text-white px-3 py-1 rounded-lg"
-            >
+            <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 rounded-lg">
               Logout
             </button>
           </div>
         ) : (
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg"
-          >
+          <button onClick={() => navigate("/login")} className="bg-red-500 text-white px-4 py-2 rounded-lg">
             Sign In
           </button>
         )}
@@ -154,10 +147,7 @@ const Navbar = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <p className="font-bold">₹{item.price * item.quantity}</p>
-                    <FaTrash 
-                      className="text-red-500 cursor-pointer"
-                      onClick={() => removeFromCart(item._id)}
-                    />
+                    <FaTrash className="text-red-500 cursor-pointer" onClick={() => removeFromCart(item._id)} />
                   </div>
                 </div>
               ))}
@@ -168,10 +158,7 @@ const Navbar = () => {
 
           {/* ✅ "Proceed to Payment" Button */}
           {cart.length > 0 && (
-            <button
-              className="bg-green-500 text-white w-full py-2 mt-4 rounded-lg font-bold"
-              onClick={() => navigate("/payment", { state: { cart } })}
-            >
+            <button className="bg-green-500 text-white w-full py-2 mt-4 rounded-lg font-bold" onClick={() => navigate("/payment", { state: { cart } })}>
               Proceed to Payment
             </button>
           )}

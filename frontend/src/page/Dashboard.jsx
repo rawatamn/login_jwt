@@ -5,7 +5,8 @@ import Movies from "../component/Movies";
 import Corousel from "../component/Corousel";
 import Footer from "../component/Footer";
 import { fetchUser } from "../api/userApi";
-// ✅ Import user API function
+import { localStorageUtils } from "../utils/localStorageUtils"; // ✅ Import local storage utils
+import { LocalStorageKeys } from "../constants/enums"; // ✅ Import enums
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -18,10 +19,9 @@ const Dashboard = () => {
         const userData = await fetchUser(); // ✅ Fetch user from API
         setUser(userData);
 
-        // Store data in localStorage
-        localStorage.setItem("username", userData.username);
-        localStorage.setItem("userRole", userData.role);
-        localStorage.setItem("userId", userData.userId);
+        localStorageUtils.setItem(LocalStorageKeys.USERNAME, userData.username);
+        localStorageUtils.setItem(LocalStorageKeys.USER_ROLE, userData.role);
+        localStorageUtils.setItem(LocalStorageKeys.USER_ID, userData.userId);
       } catch (error) {
         navigate("/login");
       } finally {

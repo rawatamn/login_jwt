@@ -5,6 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { loginUser } from "../api/authApi";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // ✅ Import Eye Icons
+import { localStorageUtils } from "../utils/localStorageUtils"; // ✅ Import local storage utils
+import { LocalStorageKeys } from "../constants/enums"; // ✅ Import enums
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,21 +26,17 @@ const Login = () => {
       setLoading(true);
       try {
         const data = await loginUser(values);
-       
-
         if (!data.data.token) {
           throw new Error("No token received from server.");
         }
 
         const { token, role } = data.data;
         const decoded = JSON.parse(atob(token.split(".")[1]));
-      
 
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", role);
-        localStorage.setItem("userId", decoded.id);
-
-       
+        // ✅ Use localStorageUtils instead of direct localStorage calls
+        localStorageUtils.setItem(LocalStorageKeys.TOKEN, token);
+        localStorageUtils.setItem(LocalStorageKeys.USER_ROLE, role);
+        localStorageUtils.setItem(LocalStorageKeys.USER_ID, decoded.id);
 
         navigate(role === "admin" ? "/admindashboard" : "/dashboard");
       } catch (error) {

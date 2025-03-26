@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchUserOrders } from "../api/orderApi";
-
+import { localStorageUtils } from "../utils/localStorageUtils"; // ✅ Import LocalStorage Utility
+import { LocalStorageKeys } from "../constants/enums"; // ✅ Import LocalStorage Enums
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -10,14 +11,20 @@ const Orders = () => {
 
   useEffect(() => {
     const loadOrders = async () => {
-      const userId = localStorage.getItem("userId");
+      const userId = localStorageUtils.getItem(LocalStorageKeys.USER_ID);
       if (!userId) {
         navigate("/login");
         return;
       }
-      const data = await fetchUserOrders(userId);
-      setOrders(data);
-      setLoading(false);
+
+      try {
+        const data = await fetchUserOrders(userId);
+        setOrders(data);
+      } catch (error) {
+        console.error("❌ Error fetching orders:", error.response?.data || error.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadOrders();

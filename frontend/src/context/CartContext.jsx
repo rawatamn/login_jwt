@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
-import { addMovieToCart, getCartData, removeMovieFromCart } from "../api/cartApi";
- // ✅ Import API functions
+import { addMovieToCart, getCartData, removeMovieFromCart } from "../api/cartApi"; // ✅ Import API functions
+import { localStorageUtils } from "../utils/localStorageUtils"; // ✅ Import LocalStorage Utility
+import { LocalStorageKeys } from "../constants/enums"; // ✅ Import LocalStorage Enums
 
 export const CartContext = createContext();
 
@@ -10,11 +11,15 @@ export const CartProvider = ({ children }) => {
   // ✅ Fetch Cart Data from Backend when component mounts
   useEffect(() => {
     const fetchCart = async () => {
-      const userId = localStorage.getItem("userId");
+      const userId = localStorageUtils.getItem(LocalStorageKeys.USER_ID);
       if (!userId) return;
 
-      const cartData = await getCartData(userId); // ✅ Use centralized API function
-      setCart(cartData);
+      try {
+        const cartData = await getCartData(userId); // ✅ Fetch cart from API
+        setCart(cartData);
+      } catch (error) {
+        console.error("❌ Error fetching cart:", error.response?.data || error.message);
+      }
     };
 
     fetchCart();
@@ -32,16 +37,24 @@ export const CartProvider = ({ children }) => {
       return [...prevCart, { ...movie, quantity: 1 }];
     });
 
-    const userId = localStorage.getItem("userId");
-    await addMovieToCart(userId, movie); // ✅ Use centralized API function
+    try {
+      const userId = localStorageUtils.getItem(LocalStorageKeys.USER_ID);
+      if (userId) await addMovieToCart(userId, movie); // ✅ Use API function
+    } catch (error) {
+      console.error("❌ Error adding to cart:", error.response?.data || error.message);
+    }
   };
 
   // ✅ Remove from Cart
   const removeFromCart = async (movieId) => {
     setCart((prevCart) => prevCart.filter((item) => item._id !== movieId));
 
-    const userId = localStorage.getItem("userId");
-    await removeMovieFromCart(userId, movieId); // ✅ Use centralized API function
+    try {
+      const userId = localStorageUtils.getItem(LocalStorageKeys.USER_ID);
+      if (userId) await removeMovieFromCart(userId, movieId); // ✅ Use API function
+    } catch (error) {
+      console.error("❌ Error removing from cart:", error.response?.data || error.message);
+    }
   };
 
   return (

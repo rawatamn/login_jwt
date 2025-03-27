@@ -1,8 +1,10 @@
+const API_VERSION="/api/v1"
 export const API = {
-    AUTH: "/api/auth",
-    USER: "/api/users",
-    MOVIE: "/api/movies",
-    CART: "/api/cart",
+
+  AUTH: `${API_VERSION}/auth`,
+    USER: `${API_VERSION}/users`,
+    MOVIE: `${API_VERSION}/movies`,
+    CART: `${API_VERSION}/cart`,
     // Auth Routes
     REGISTER: "/register",
     LOGIN: "/login",

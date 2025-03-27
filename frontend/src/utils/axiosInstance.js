@@ -2,7 +2,7 @@ import axios from "axios";
 import { localStorageUtils } from "./localStorageUtils";
 import { LocalStorageKeys } from "../constants/enums";
 
-const api_url = import.meta.env.VITE_BACKEND_URL;
+const api_url = import.meta.env.VITE_BACKEND_URL
 
 // ✅ Create an Axios instance
 const axiosInstance = axios.create({

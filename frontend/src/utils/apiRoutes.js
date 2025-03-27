@@ -3,7 +3,7 @@ export const API = {
     MOVIES: "/api/movies",
     AUTH: "/api/auth",
     CART: "/api/cart",
-  
+    ORDERS: "/api/cart/orders",
     // User API Endpoints
     USER_COUNT: "/count",
     TOTAL_REVENUE: "/total-revenue",

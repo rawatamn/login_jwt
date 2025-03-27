@@ -14,10 +14,13 @@ export const initiatePayment = async (userId) => {
 // ✅ Confirm Payment
 export const confirmPayment = async (userId) => {
   try {
-    await axiosInstance.post(`${API.CART}${API.CART_CONFIRM_PAYMENT}`,{ userId });
-    return "Payment Successful! 🎉";
+    const response = await axiosInstance.post(`${API.CART}${API.CART_CONFIRM_PAYMENT}`, { userId });
+    console.log("✅ Order Confirmed:", response.data);
+    
+    return response.data; // Ensure it returns order data
   } catch (error) {
     console.error("❌ Error confirming payment:", error);
     throw new Error(error.response?.data?.message || "Payment Failed. Please try again.");
   }
 };
+

@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 import Cart from "../models/cart.js";
 import Messages from "../utilities/message.js";
+import Order from "../models/Order.js";
 // ✅ Fetch logged-in user
 export const getLoggedInUsers = async (userId) => {
   return await User.findById(userId).select("-password");
@@ -100,7 +101,7 @@ export const calculateTotalRevenues = async () => {
    
 
     // Fetch orders with successful payments
-    const successfulOrders = await Cart.find({ paymentStatus: "successful" });
+    const successfulOrders = await Order.find({ paymentStatus: "successful" });
 
     
 

@@ -32,3 +32,14 @@ export const fetchTotalRevenue = async () => {
     throw new Error(error.response?.data?.message || "Failed to fetch total revenue");
   }
 };
+
+export const fetchUserRevenue = async () => {
+  try {
+    const response = await axiosInstance.get(`${API.USERS}${API.USER_REVENUE}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user revenue data:", error);
+    return [];
+  }
+};
+

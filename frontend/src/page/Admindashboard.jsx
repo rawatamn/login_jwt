@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Menu, X, Users, Film, BarChart2, LogOut } from "lucide-react";
 import UserList from "../component/UserList";
 import MovieList from "../component/MovieList";
+import RevenueList from "../component/RevenueList";
 import { fetchMovieCount, fetchTotalRevenue, fetchUserCount } from "../api/adminApi";
 import { localStorageUtils } from "../utils/localStorageUtils";
 import { LocalStorageKeys } from "../constants/enums";
@@ -22,7 +23,7 @@ const AdminDashboard = () => {
           return;
         }
 
-        // ✅ Fetch Stats using Centralized API
+        // ✅ Fetch Stats using API
         const [totalUsers, totalMovies, totalRevenue] = await Promise.all([
           fetchUserCount(),
           fetchMovieCount(),
@@ -59,21 +60,27 @@ const AdminDashboard = () => {
 
         <ul className="mt-6">
           <li className="mb-3">
-            <button onClick={() => setView("dashboard")} className="flex items-center p-3 bg-gray-700 rounded hover:bg-gray-600 w-full">
+            <button onClick={() => setView("dashboard")} className={`flex items-center p-3 rounded w-full ${view === "dashboard" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
               <BarChart2 size={20} />
               {isSidebarOpen && <span className="ml-3">Dashboard</span>}
             </button>
           </li>
           <li className="mb-3">
-            <button onClick={() => setView("users")} className="flex items-center p-3 hover:bg-gray-700 rounded w-full">
+            <button onClick={() => setView("users")} className={`flex items-center p-3 rounded w-full ${view === "users" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
               <Users size={20} />
               {isSidebarOpen && <span className="ml-3">Manage Users</span>}
             </button>
           </li>
           <li className="mb-3">
-            <button onClick={() => setView("movies")} className="flex items-center p-3 hover:bg-gray-700 rounded w-full">
+            <button onClick={() => setView("movies")} className={`flex items-center p-3 rounded w-full ${view === "movies" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
               <Film size={20} />
               {isSidebarOpen && <span className="ml-3">Manage Movies</span>}
+            </button>
+          </li>
+          <li className="mb-3">
+            <button onClick={() => setView("revenue")} className={`flex items-center p-3 rounded w-full ${view === "revenue" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
+              <BarChart2 size={20} />
+              {isSidebarOpen && <span className="ml-3">Revenue Report</span>}
             </button>
           </li>
         </ul>
@@ -107,6 +114,7 @@ const AdminDashboard = () => {
 
         {view === "users" && <UserList />}
         {view === "movies" && <MovieList />}
+        {view === "revenue" && <RevenueList />}
       </main>
     </div>
   );

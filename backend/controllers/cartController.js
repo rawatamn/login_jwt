@@ -63,9 +63,15 @@ export const removeFromCart = async (req, res) => {
 export const confirmPayment = async (req, res) => {
   try {
     const { userId } = req.body;
-    const cart = await cartService.confirmPayment(userId);
-    res.status(200).json({ message: Messages.PAYMENT.CONFIRMED, cart });
+    console.log("💳 Confirming payment for user:", userId); // Debug log
+
+    const order = await cartService.confirmPayment(userId);
+
+    console.log("✅ Payment confirmed, order created:", JSON.stringify(order, null, 2));
+
+    res.status(200).json({ message: Messages.PAYMENT.CONFIRMED, order });
   } catch (error) {
+    console.error("❌ Error in confirmPayment:", error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -73,9 +79,16 @@ export const confirmPayment = async (req, res) => {
 // ✅ Get Successful Orders
 export const getOrders = async (req, res) => {
   try {
+    console.log("🛠️ Fetching orders for user:", req.params.userId);
+
     const orders = await cartService.getSuccessfulOrders(req.params.userId);
+
+    console.log("✅ Orders fetched from DB:", JSON.stringify(orders, null, 2));
+
     res.status(200).json(orders);
   } catch (error) {
+    console.error("❌ Error fetching orders:", error.message);
     res.status(500).json({ message: error.message });
   }
 };
+

@@ -1,9 +1,9 @@
 export const API = {
-    USERS: "/api/users",
-    MOVIES: "/api/movies",
-    AUTH: "/api/auth",
-    CART: "/api/cart",
-    ORDERS: "/api/cart/orders",
+    USERS: "/api/v1/users",
+    MOVIES: "/api/v1/movies",
+    AUTH: "/api/v1/auth",
+    CART: "/api/v1/cart",
+    ORDERS: "/api/v1/cart/orders",
     // User API Endpoints
     USER_COUNT: "/count",
     TOTAL_REVENUE: "/total-revenue",

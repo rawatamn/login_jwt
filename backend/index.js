@@ -33,6 +33,11 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
+// ✅ Connect to Database
+connectDB().then(() => {
+  createSuperadmin(); // ✅ Call Superadmin Creation
+  
+});
 
 // ✅ Export Express App for Vercel
 export default app;

@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser, deleteUser, getAllUsers, getLoggedInUser, getTotalRevenue, getUserCount, updateUser } from "../controllers/userController.js"; // ✅ Add `.js`
+import { createUser, deleteUser, getAllUsers, getLoggedInUser, getTotalRevenue, getUserCount, getUserRevenue, updateUser, } from "../controllers/userController.js"; // ✅ Add `.js`
 import verifyToken from "../middleware/authMiddleware.js"; // ✅ Add `.js`
 import { API } from "../utilities/apiRoutes.js";
 
@@ -13,5 +13,5 @@ router.put(API.UPDATE_USER, verifyToken, updateUser);
 router.delete(API.DELETE_USER, verifyToken, deleteUser);
 router.get(API.USER_COUNT, verifyToken, getUserCount);
 router.get(API.TOTAL_REVENUE, verifyToken, getTotalRevenue);
-
+router.get(API.USER_REVENUE, verifyToken, getUserRevenue);
 export default router;

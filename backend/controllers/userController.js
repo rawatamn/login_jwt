@@ -1,4 +1,4 @@
-import {getLoggedInUsers,getAllUser,createUsers,updateUsers,deleteUsers,calculateTotalRevenues,countUser} from "../services/userService.js"; // ✅ Add `.js` extension
+import {getLoggedInUsers,getAllUser,createUsers,updateUsers,deleteUsers,calculateTotalRevenues,countUser, getUserRevenueService} from "../services/userService.js"; // ✅ Add `.js` extension
 import Messages from "../utilities/message.js";
 // ✅ Fetch Logged-in User
 export const getLoggedInUser = async (req, res) => {
@@ -118,5 +118,16 @@ export const getTotalRevenue = async (req, res) => {
   } catch (error) {
     console.error("❌ Error fetching total revenue:", error);
     res.status(500).json({ message: Messages.Revenue.Total_Revenue, error: error.message });
+  }
+};
+
+// ✅ Controller to get user revenue contribution
+export const getUserRevenue = async (req, res) => {
+  try {
+    const revenueData = await getUserRevenueService();
+    res.status(200).json(revenueData);
+  } catch (error) {
+    console.error("❌ Error fetching user revenue:", error);
+    res.status(500).json({ message: "Failed to fetch user revenue" });
   }
 };

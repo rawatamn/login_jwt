@@ -31,5 +31,6 @@ export const API = {
   REMOVE_FROM_CART: "/:userId/:movieId",
   CONFIRM_PAYMENT: "/confirm-payment",
   GET_ORDERS: "/orders/:userId",
+  USER_REVENUE:"/user-revenue"
   };
   

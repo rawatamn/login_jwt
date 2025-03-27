@@ -128,3 +128,69 @@ export const calculateTotalRevenues = async () => {
     throw new Error(error.message || Messages.Revenue.Total_Revenue);
   }
 };
+export const getUserRevenueService = async () => {
+  try {
+    const revenueData = await Order.aggregate([
+      {
+        $match: { paymentStatus: "successful" }, // ✅ Only successful payments
+      },
+      {
+        $group: {
+          _id: "$userId",
+          totalSpent: { $sum: "$totalPrice" },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id", // ✅ userId from orders (String)
+          foreignField: "userId", // ✅ userId in Users (String)
+          as: "userDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userDetails",
+          preserveNullAndEmptyArrays: true, // ✅ Avoid errors if user not found
+        },
+      },
+      {
+        $addFields: {
+          username: { $ifNull: ["$userDetails.username", "Unknown"] },
+          isDeleted: { $ifNull: ["$userDetails.isDeleted", false] },
+        },
+      },
+      {
+        $addFields: {
+          status: {
+            $cond: {
+              if: { $eq: ["$username", "Unknown"] },
+              then: "Inactive", // ✅ Mark unknown users as "Inactive"
+              else: {
+                $cond: {
+                  if: { $eq: ["$isDeleted", true] },
+                  then: "Deleted",
+                  else: "Active",
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          userId: "$_id",
+          username: 1,
+          totalSpent: 1,
+          status: 1,
+        },
+      },
+    ]);
+
+    return revenueData;
+  } catch (error) {
+    console.error("❌ Error in getUserRevenueService:", error);
+    throw new Error("Service error while fetching user revenue");
+  }
+};
+

@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import crypto from "crypto"; // Import crypto for unique ID generation
+import { nanoid } from "nanoid"; // ✅ Import Nano ID
 
 const movieSchema = new mongoose.Schema({
   _id: { 
     type: String, 
-    default: () => crypto.randomBytes(12).toString("hex"), // ✅ 24-character ID
+    default: () => nanoid(24) // ✅ Generates a 24-character string ID
   },
   title: { type: String, required: true },
   overview: { type: String, required: true },

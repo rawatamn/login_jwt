@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import AddMovie from "./AddMovie"; // Import AddMovie component
 import { deleteMovie, fetchMovies } from "../api/movieAdminapi";
 
@@ -10,26 +9,29 @@ const MovieList = () => {
   const [editMovie, setEditMovie] = useState(null); // ✅ Store movie to edit
 
   // ✅ Fetch Movies from API
-  useEffect(() => {
-    const loadMovies = async () => {
-      try {
-        const moviesData = await fetchMovies();
-        setMovies(moviesData);
-      } catch (error) {
-        console.error("❌ Error loading movies.");
-      } finally {
-        setLoading(false);
-      }
-    };
+// ✅ Fetch Movies from API
+useEffect(() => {
+  const loadMovies = async () => {
+    try {
+      const moviesData = await fetchMovies();
+      console.log("Movies Data:", moviesData); // ✅ Debugging log
+      setMovies(moviesData);
+    } catch (error) {
+      console.error("❌ Error loading movies.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    loadMovies();
-  }, []);
+  loadMovies();
+}, [movies]); // ✅ Depend on `movies` to auto-refresh the list
+
 
   // ✅ Delete Movie Function
   const handleDelete = async (id) => {
     try {
       await deleteMovie(id);
-      setMovies(movies.filter((movie) => movie._id !== id));
+      setMovies((prevMovies) => prevMovies.filter((movie) => movie._id !== id));
       alert("Movie deleted successfully!");
     } catch (error) {
       alert("Error deleting movie.");
@@ -70,9 +72,9 @@ const MovieList = () => {
 
       {/* ✅ Movie List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {movies.map((movie) => (
+        {movies.map((movie, index) => (
           <div
-            key={movie._id}
+            key={movie._id || `movie-${index}`} // ✅ Fallback if `_id` is missing
             className="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col items-center"
           >
             <img

@@ -14,6 +14,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { motion } from "framer-motion";
+import { toast, ToastContainer } from "react-toastify";
+import Loader from "../component/Loader";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -26,11 +28,11 @@ const Dashboard = () => {
       try {
         const userData = await fetchUser();
         setUser(userData);
-
         localStorageUtils.setItem(LocalStorageKeys.USERNAME, userData.username);
         localStorageUtils.setItem(LocalStorageKeys.USER_ROLE, userData.role);
         localStorageUtils.setItem(LocalStorageKeys.USER_ID, userData.userId);
       } catch (error) {
+        toast.error("User session expired! Redirecting...");
         navigate("/login");
       }
     };
@@ -40,7 +42,7 @@ const Dashboard = () => {
         const moviesData = await fetchMovies();
         setMovies(moviesData);
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        toast.error("Error fetching movies! ❌");
       } finally {
         setLoading(false);
       }
@@ -50,7 +52,7 @@ const Dashboard = () => {
     getMovies();
   }, [navigate]);
 
-  if (loading) return <h1 className="text-center mt-10">🔄 Loading Dashboard...</h1>;
+  if (loading) return <Loader />;
   if (!user) return <h1 className="text-center mt-10 text-red-500">❌ Error: User data not found</h1>;
 
   const today = new Date().toISOString().split("T")[0];
@@ -59,10 +61,11 @@ const Dashboard = () => {
   return (
     <div>
       <Navbar />
+      <ToastContainer position="top-right" autoClose={3000} />
       <Corousel />
       <Movies />
       
-      {/* Upcoming Movies Section with Swiper */}
+      {/* ✅ Upcoming Movies Section */}
       {upcomingMovies.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -70,14 +73,7 @@ const Dashboard = () => {
           transition={{ duration: 0.8 }}
           className="p-6 max-w-[1600px] mx-auto"
         >
-          <motion.h2
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-3xl font-bold mb-6 text-left text-gray-800"
-          >
-            🎬 Upcoming Movies
-          </motion.h2>
+          <h2 className="text-3xl font-bold mb-6 text-left text-gray-800">🎬 Upcoming Movies</h2>
 
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
@@ -97,34 +93,23 @@ const Dashboard = () => {
             {upcomingMovies.map((movie) => (
               <SwiperSlide key={movie._id}>
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                  whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.3)" }}
-                  className="bg-white p-4 rounded-lg shadow-lg cursor-pointer transition-transform transform"
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-white p-4 rounded-lg shadow-lg cursor-pointer"
                   onClick={() => navigate(`/movies/${movie._id}`)}
                 >
-                  <motion.img
+                  <img
                     src={movie.image}
                     alt={movie.title}
-                    className="w-full h-[500px] object-cover rounded-lg transition-opacity duration-300 hover:opacity-90"
-                    whileHover={{ scale: 1.02 }}
+                    className="w-full h-[500px] object-cover rounded-lg transition-opacity hover:opacity-90"
                   />
-                  <motion.h3
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                    className="text-xl font-semibold mt-3 text-center text-gray-800"
-                  >
-                    {movie.title}
-                  </motion.h3>
+                  <h3 className="text-xl font-semibold mt-3 text-center text-gray-800">{movie.title}</h3>
                 </motion.div>
               </SwiperSlide>
             ))}
           </Swiper>
         </motion.div>
       )}
-      
+
       <Footer />
     </div>
   );

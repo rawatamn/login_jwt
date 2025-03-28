@@ -1,6 +1,8 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { CartProvider } from "./context/CartContext"; // ✅ Cart Context for global state
+import { ToastContainer } from "react-toastify"; // ✅ Import ToastContainer
+import "react-toastify/dist/ReactToastify.css"; // ✅ Import styles
 
 // ✅ Import Pages
 import Signup from "./page/Signup";
@@ -18,6 +20,9 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 const App = () => {
   return (
     <CartProvider> {/* ✅ Wrap with CartProvider for global cart state */}
+      {/* ✅ Global ToastContainer */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar theme="colored" />
+
       <Routes>
         {/* ✅ Public Routes */}
         <Route path="/signup" element={<Signup />} />

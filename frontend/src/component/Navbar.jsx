@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { FaUser, FaSearch, FaShoppingCart, FaHistory, FaTimes, FaTrash } from "react-icons/fa";
 import { CartContext } from "../context/CartContext";
 import { searchMovies } from "../api/userApi";
-import { localStorageUtils } from "../utils/localStorageUtils"; // ✅ Use local storage utils
-import { LocalStorageKeys } from "../constants/enums"; // ✅ Use enums
+import { localStorageUtils } from "../utils/localStorageUtils"; 
+import { LocalStorageKeys } from "../constants/enums"; 
+import { toast, ToastContainer } from "react-toastify";
+import { motion } from "framer-motion";
+import "react-toastify/dist/ReactToastify.css";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -15,7 +18,7 @@ const Navbar = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cart, removeFromCart } = useContext(CartContext);
 
-  // ✅ Fetch username from LocalStorage using Utils
+  // ✅ Fetch username from LocalStorage
   useEffect(() => {
     const storedUsername = localStorageUtils.getItem(LocalStorageKeys.USERNAME);
     if (storedUsername) {
@@ -23,29 +26,27 @@ const Navbar = () => {
     }
   }, []);
 
-  // ✅ Fetch Movies from Backend with Regex Search
+  // ✅ Fetch Movies based on search query
   useEffect(() => {
-    const fetchMovies = async () => {
-      if (!searchQuery.trim()) {
-        setFilteredMovies([]);
-        return;
-      }
+    if (!searchQuery.trim()) {
+      setFilteredMovies([]);
+      return;
+    }
 
+    const fetchMovies = async () => {
       setLoading(true);
       try {
         const movies = await searchMovies(searchQuery);
         setFilteredMovies(movies);
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        toast.error("❌ Error searching movies!");
       } finally {
         setLoading(false);
       }
     };
 
-    if (searchQuery) {
-      const timeoutId = setTimeout(fetchMovies, 500);
-      return () => clearTimeout(timeoutId);
-    }
+    const timeoutId = setTimeout(fetchMovies, 500);
+    return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
   // ✅ Handle Movie Selection (Redirect)
@@ -57,16 +58,26 @@ const Navbar = () => {
 
   // ✅ Handle Logout
   const handleLogout = () => {
-    localStorageUtils.clearStorage();
-    navigate("/login");
+    toast.success("✅ Logged out successfully!", {
+      onClose: () => {
+        localStorageUtils.clearStorage();
+        navigate("/login");
+      },
+    });
   };
 
   return (
     <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md relative">
+      <ToastContainer position="top-right" autoClose={2000} />
+      
       {/* ✅ Logo */}
-      <span className="text-3xl font-bold cursor-pointer" onClick={() => navigate("/login")}>
+      <motion.span
+        whileHover={{ scale: 1.1 }}
+        className="text-3xl font-bold cursor-pointer"
+        onClick={() => navigate("/dashboard")}
+      >
         book<span className="text-red-500">my</span>show
-      </span>
+      </motion.span>
 
       {/* ✅ Search Bar */}
       <div className="relative w-1/3">
@@ -83,47 +94,71 @@ const Navbar = () => {
 
         {/* ✅ Search Suggestions Dropdown */}
         {searchQuery && (
-          <div className="absolute w-full bg-white shadow-lg rounded-lg mt-2 max-h-60 overflow-y-auto z-10">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute w-full bg-white shadow-lg rounded-lg mt-2 max-h-60 overflow-y-auto z-10"
+          >
             {loading ? (
               <p className="p-3 text-gray-500">Loading...</p>
             ) : filteredMovies.length > 0 ? (
               filteredMovies.map((movie) => (
-                <div key={movie._id} className="p-3 cursor-pointer hover:bg-gray-100" onClick={() => handleMovieSelect(movie._id)}>
+                <div
+                  key={movie._id}
+                  className="p-3 cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleMovieSelect(movie._id)}
+                >
                   {movie.title}
                 </div>
               ))
             ) : (
               <p className="p-3 text-gray-500">No movies found</p>
             )}
-          </div>
+          </motion.div>
         )}
       </div>
 
       {/* ✅ User Info + Cart + Order History */}
       <div className="flex items-center space-x-6">
         {/* ✅ Order History Icon */}
-        <div className="relative cursor-pointer" onClick={() => navigate("/orders")}>
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          className="relative cursor-pointer"
+          onClick={() => navigate("/orders")}
+        >
           <FaHistory className="text-gray-700 text-2xl" title="Order History" />
-        </div>
+        </motion.div>
 
         {/* ✅ Cart Icon */}
-        <div className="relative cursor-pointer" onClick={() => setIsCartOpen(!isCartOpen)}>
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          className="relative cursor-pointer"
+          onClick={() => setIsCartOpen(!isCartOpen)}
+        >
           <FaShoppingCart className="text-gray-700 text-2xl" />
           {cart.length > 0 && (
-            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{cart.length}</span>
+            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+              {cart.length}
+            </span>
           )}
-        </div>
+        </motion.div>
 
         {/* ✅ Logout or Sign In */}
         {username ? (
           <div className="flex items-center space-x-3">
             <span className="font-medium">Hey, {username}</span>
-            <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 rounded-lg">
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-3 py-1 rounded-lg"
+            >
               Logout
             </button>
           </div>
         ) : (
-          <button onClick={() => navigate("/login")} className="bg-red-500 text-white px-4 py-2 rounded-lg">
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg"
+          >
             Sign In
           </button>
         )}
@@ -131,7 +166,11 @@ const Navbar = () => {
 
       {/* ✅ Cart Popup */}
       {isCartOpen && (
-        <div className="absolute top-16 right-6 bg-white shadow-lg p-4 rounded-lg w-80 z-20">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="absolute top-16 right-6 bg-white shadow-lg p-4 rounded-lg w-80 z-20"
+        >
           <div className="flex justify-between items-center border-b pb-2 mb-2">
             <h2 className="text-lg font-semibold">Your Cart</h2>
             <FaTimes className="cursor-pointer" onClick={() => setIsCartOpen(false)} />
@@ -147,7 +186,13 @@ const Navbar = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <p className="font-bold">₹{item.price * item.quantity}</p>
-                    <FaTrash className="text-red-500 cursor-pointer" onClick={() => removeFromCart(item._id)} />
+                    <FaTrash
+                      className="text-red-500 cursor-pointer"
+                      onClick={() => {
+                        removeFromCart(item._id);
+                        toast.info("Item removed from cart 🛒");
+                      }}
+                    />
                   </div>
                 </div>
               ))}
@@ -158,11 +203,14 @@ const Navbar = () => {
 
           {/* ✅ "Proceed to Payment" Button */}
           {cart.length > 0 && (
-            <button className="bg-green-500 text-white w-full py-2 mt-4 rounded-lg font-bold" onClick={() => navigate("/payment", { state: { cart } })}>
+            <button
+              className="bg-green-500 text-white w-full py-2 mt-4 rounded-lg font-bold"
+              onClick={() => navigate("/payment", { state: { cart } })}
+            >
               Proceed to Payment
             </button>
           )}
-        </div>
+        </motion.div>
       )}
     </nav>
   );

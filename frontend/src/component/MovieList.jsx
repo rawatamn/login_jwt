@@ -1,59 +1,57 @@
 import React, { useEffect, useState } from "react";
-import AddMovie from "./AddMovie"; // Import AddMovie component
+import AddMovie from "./AddMovie";
 import { deleteMovie, fetchMovies } from "../api/movieAdminapi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "../component/Loader";
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAddMovie, setShowAddMovie] = useState(false); // ✅ Toggle Add/Edit Form
-  const [editMovie, setEditMovie] = useState(null); // ✅ Store movie to edit
+  const [showAddMovie, setShowAddMovie] = useState(false);
+  const [editMovie, setEditMovie] = useState(null);
 
-  // ✅ Fetch Movies from API
-// ✅ Fetch Movies from API
-useEffect(() => {
-  const loadMovies = async () => {
-    try {
-      const moviesData = await fetchMovies();
-      console.log("Movies Data:", moviesData); // ✅ Debugging log
-      setMovies(moviesData);
-    } catch (error) {
-      console.error("❌ Error loading movies.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const loadMovies = async () => {
+      try {
+        const moviesData = await fetchMovies();
+        setMovies(moviesData);
+      } catch (error) {
+        toast.error("Error loading movies. ❌");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  loadMovies();
-}, [movies]); // ✅ Depend on `movies` to auto-refresh the list
+    loadMovies();
+  }, []);
 
-
-  // ✅ Delete Movie Function
   const handleDelete = async (id) => {
     try {
       await deleteMovie(id);
       setMovies((prevMovies) => prevMovies.filter((movie) => movie._id !== id));
-      alert("Movie deleted successfully!");
+      toast.success("Movie deleted successfully! ✅");
     } catch (error) {
-      alert("Error deleting movie.");
+      toast.error("Error deleting movie. ❌");
     }
   };
 
-  // ✅ Edit Movie Function
   const handleEdit = (movie) => {
-    setEditMovie(movie); // Set movie to edit
-    setShowAddMovie(true); // Show the form
+    setEditMovie(movie);
+    setShowAddMovie(true);
   };
 
-  if (loading) return <p className="text-center">Loading movies...</p>;
+  if (loading) return <Loader />;
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar theme="colored" />
+
       <h2 className="text-2xl font-bold mb-4">Manage Movies</h2>
 
-      {/* ✅ Toggle Add/Edit Movie Form */}
       <button
         onClick={() => {
-          setEditMovie(null); // Reset edit state
+          setEditMovie(null);
           setShowAddMovie(!showAddMovie);
         }}
         className="bg-blue-500 text-white px-4 py-2 mb-6 rounded"
@@ -61,20 +59,18 @@ useEffect(() => {
         {showAddMovie ? "✖ Close Movie Form" : "➕ Add New Movie"}
       </button>
 
-      {/* ✅ Show AddMovie Component for Adding/Editing */}
       {showAddMovie && (
         <AddMovie
           setMovies={setMovies}
           setShowAddMovie={setShowAddMovie}
-          editMovie={editMovie} // ✅ Pass movie to edit
+          editMovie={editMovie}
         />
       )}
 
-      {/* ✅ Movie List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {movies.map((movie, index) => (
+        {movies.map((movie) => (
           <div
-            key={movie._id || `movie-${index}`} // ✅ Fallback if `_id` is missing
+            key={movie._id}
             className="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col items-center"
           >
             <img
@@ -88,7 +84,6 @@ useEffect(() => {
             <p className="text-yellow-500 font-semibold">⭐ {movie.rating || "N/A"}/10</p>
             <p className="text-lg font-bold text-green-600 mt-2">₹{movie.price}</p>
 
-            {/* ✅ Action Buttons */}
             <div className="mt-4 flex space-x-3">
               <button
                 className="bg-yellow-500 text-white px-4 py-2 rounded"

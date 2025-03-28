@@ -5,11 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { registerUser } from "../api/authApi";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // ✅ Import Eye Icons
+import Loader from "../component/Loader";
+import { toast, ToastContainer } from "react-toastify"; // ✅ Import Toaster
+import "react-toastify/dist/ReactToastify.css"; // ✅ Toaster CSS
 
 const Signup = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // ✅ State for toggling password visibility
+  const [showPassword, setShowPassword] = useState(false); // ✅ Toggle Password Visibility
 
   const validationSchema = Yup.object({
     username: Yup.string().min(3, "Must be at least 3 characters").required("Required"),
@@ -20,13 +23,15 @@ const Signup = () => {
   const formik = useFormik({
     initialValues: { username: "", useremail: "", password: "" },
     validationSchema,
-    onSubmit: async (values, { setErrors }) => {
+    onSubmit: async (values) => {
       setLoading(true);
       try {
         await registerUser(values); // ✅ Call API function
-        navigate("/login");
+        toast.success("Signup Successful! 🎉"); // ✅ Show success toaster
+        setTimeout(() => navigate("/login"), 1500); // ✅ Redirect after toast
       } catch (error) {
-        setErrors({ general: error.response?.data?.message || "Signup failed" });
+        console.error("Signup Error:", error);
+        toast.error(error.response?.data?.message || "Signup Failed! ❌"); // ✅ Show error toaster
       }
       setLoading(false);
     },
@@ -34,6 +39,8 @@ const Signup = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500">
+      <ToastContainer position="top-right" autoClose={3000} /> {/* ✅ Toaster Container */}
+
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -41,11 +48,6 @@ const Signup = () => {
         className="bg-white/20 backdrop-blur-lg p-8 rounded-2xl shadow-xl w-full max-w-sm"
       >
         <h2 className="text-3xl font-extrabold text-white text-center mb-6">Create Account</h2>
-
-        {/* ✅ Show Error Messages */}
-        {formik.errors.general && (
-          <p className="text-red-300 text-sm text-center mb-3">{formik.errors.general}</p>
-        )}
 
         <form onSubmit={formik.handleSubmit} className="space-y-5">
           {/* Username Input */}
@@ -96,14 +98,14 @@ const Signup = () => {
             )}
           </div>
 
-          {/* Submit Button with Loading */}
+          {/* Submit Button with Loader */}
           <motion.button
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={loading}
-            className="w-full bg-white text-blue-500 font-bold py-3 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300"
+            className="w-full bg-white text-blue-500 font-bold py-3 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 flex items-center justify-center"
           >
-            {loading ? "Signing Up..." : "Sign Up"}
+            {loading ? <Loader /> : "Sign Up"}
           </motion.button>
         </form>
 

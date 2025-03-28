@@ -7,6 +7,8 @@ import RevenueList from "../component/RevenueList";
 import { fetchMovieCount, fetchTotalRevenue, fetchUserCount } from "../api/adminApi";
 import { localStorageUtils } from "../utils/localStorageUtils";
 import { LocalStorageKeys } from "../constants/enums";
+import { toast, ToastContainer } from "react-toastify"; // ✅ Import Toaster
+import "react-toastify/dist/ReactToastify.css"; // ✅ Toaster CSS
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -33,6 +35,7 @@ const AdminDashboard = () => {
         setStats({ totalUsers, totalMovies, totalRevenue });
       } catch (error) {
         console.error(error);
+        toast.error("Failed to fetch dashboard stats! ❌"); // ✅ Show error toaster
       }
     };
 
@@ -42,11 +45,14 @@ const AdminDashboard = () => {
   // ✅ Logout Function
   const handleLogout = () => {
     localStorageUtils.clearStorage(); // ✅ Clears all stored user data
-    navigate("/login");
+    toast.success("Logout successful! 🎉"); // ✅ Show success toaster
+    setTimeout(() => navigate("/login"), 1500); // ✅ Redirect after toast
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
+      <ToastContainer position="top-right" autoClose={3000} /> {/* ✅ Toaster Container */}
+
       {/* Sidebar */}
       <aside className={`bg-gray-800 text-white h-full transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-20"}`}>
         <div className="p-5 flex items-center justify-between">

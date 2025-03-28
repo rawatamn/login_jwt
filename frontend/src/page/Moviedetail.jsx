@@ -111,22 +111,25 @@ const Moviedetail = () => {
 
             {/* ✅ Buttons */}
             <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
-              <Button
-                onClick={handleAddToCart}
-                variant="contained"
-                startIcon={<ShoppingCart />}
-                sx={{
-                  backgroundColor: "#ff4757",
-                  "&:hover": { backgroundColor: "#e84118" },
-                  fontSize: "18px",
-                  padding: "12px 24px",
-                  borderRadius: "12px",
-                  fontWeight: "bold",
-                  color: "white", // ✅ Ensure text is visible
-                }}
-              >
-                Add to Cart
-              </Button>
+            {new Date(movie.release_date) <= new Date() && (
+  <Button
+    onClick={handleAddToCart}
+    variant="contained"
+    startIcon={<ShoppingCart />}
+    sx={{
+      backgroundColor: "#ff4757",
+      "&:hover": { backgroundColor: "#e84118" },
+      fontSize: "18px",
+      padding: "12px 24px",
+      borderRadius: "12px",
+      fontWeight: "bold",
+      color: "white",
+    }}
+  >
+    Add to Cart
+  </Button>
+)}
+
               <Button
                 onClick={() => navigate("/dashboard")}
                 variant="outlined"

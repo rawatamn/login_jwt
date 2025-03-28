@@ -17,15 +17,18 @@ const MoviesCarousel = () => {
     const loadMovies = async () => {
       try {
         const data = await fetchMovies(); // ✅ Fetch movies via API function
-        setMovies(data);
+        const today = new Date().toISOString().split("T")[0]; // ✅ Get today's date in YYYY-MM-DD format
+        const filteredMovies = data.filter(movie => movie.release_date <= today); // ✅ Exclude future movies
+        setMovies(filteredMovies);
       } catch (error) {
         console.error("❌ Error loading movies:", error);
       }
       setLoading(false);
     };
-
+  
     loadMovies();
   }, []);
+  
 
   return (
     <motion.div

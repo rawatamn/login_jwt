@@ -4,17 +4,17 @@ import { nanoid } from "nanoid";
 import Cart from "../models/cart.js";
 import Messages from "../utilities/message.js";
 import Order from "../models/Order.js";
-// ✅ Fetch logged-in user
+// Fetch logged-in user
 export const getLoggedInUsers = async (userId) => {
   return await User.findById(userId).select("-password");
 };
 
-// ✅ Fetch all users (excluding superadmins)
+// Fetch all users (excluding superadmins)
 export const getAllUser = async () => {
   return await User.find({ role: { $ne: "superadmin" } }).select("-password");
 };
 
-// ✅ Create a new user
+// Create a new user
 export const createUsers = async (userData, createdBy) => {
   const { username, useremail, password, role } = userData;
 
@@ -37,7 +37,7 @@ export const createUsers = async (userData, createdBy) => {
   return await newUsers.save();
 };
 
-// ✅ Update an existing user
+// Update an existing user
 export const updateUsers = async (userId, updateData, updatedBy) => {
   try {
    
@@ -77,25 +77,32 @@ export const updateUsers = async (userId, updateData, updatedBy) => {
     };
 
   } catch (error) {
-    console.error("❌ Error in updateUser service:", error);
+    console.error(" Error in updateUser service:", error);
     return { error: Messages.ERROR.UNKNOWN_ERROR};
   }
 };
 
-// ✅ Delete a user
-export const deleteUsers = async (userId) => {
-  if (!mongoose.Types.ObjectId.isValid(userId) && userId.length !== 10) {
+// Delete a user
+// Delete a user by _id (ObjectId)
+export const deleteUsers = async (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error(Messages.VALIDATION.INVALID_INPUT);
   }
-  return await User.findByIdAndDelete(userId);
+
+  return await User.findByIdAndUpdate(
+    id,
+    { isDeleted: true }, // Soft delete instead of removing the record
+    { new: true }
+  );
 };
 
-// ✅ Count total users
+
+// Count total users
 export const countUser = async () => {
   return await User.countDocuments();
 };
 
-// ✅ Calculate total revenue
+// Calculate total revenue
 export const calculateTotalRevenues = async () => {
   try {
    
@@ -124,7 +131,7 @@ export const calculateTotalRevenues = async () => {
     return totalRevenue;
 
   } catch (error) {
-    console.error("❌ Error in calculateTotalRevenue:", error);
+    console.error(" Error in calculateTotalRevenue:", error);
     throw new Error(error.message || Messages.Revenue.Total_Revenue);
   }
 };
@@ -132,7 +139,7 @@ export const getUserRevenueService = async () => {
   try {
     const revenueData = await Order.aggregate([
       {
-        $match: { paymentStatus: "successful" }, // ✅ Only successful payments
+        $match: { paymentStatus: "successful" }, 
       },
       {
         $group: {
@@ -143,15 +150,15 @@ export const getUserRevenueService = async () => {
       {
         $lookup: {
           from: "users",
-          localField: "_id", // ✅ userId from orders (String)
-          foreignField: "userId", // ✅ userId in Users (String)
+          localField: "_id",
+          foreignField: "userId",
           as: "userDetails",
         },
       },
       {
         $unwind: {
           path: "$userDetails",
-          preserveNullAndEmptyArrays: true, // ✅ Avoid errors if user not found
+          preserveNullAndEmptyArrays: true, 
         },
       },
       {
@@ -165,11 +172,11 @@ export const getUserRevenueService = async () => {
           status: {
             $cond: {
               if: { $eq: ["$username", "Unknown"] },
-              then: "Inactive", // ✅ Mark unknown users as "Inactive"
+              then: "Inactive",
               else: {
                 $cond: {
                   if: { $eq: ["$isDeleted", true] },
-                  then: "Deleted",
+                  then: "Inactive",
                   else: "Active",
                 },
               },
@@ -189,8 +196,9 @@ export const getUserRevenueService = async () => {
 
     return revenueData;
   } catch (error) {
-    console.error("❌ Error in getUserRevenueService:", error);
+    console.error("Error in getUserRevenueService:", error);
     throw new Error("Service error while fetching user revenue");
   }
 };
+
 

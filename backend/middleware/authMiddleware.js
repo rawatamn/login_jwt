@@ -1,4 +1,4 @@
-import User from "../models/user.js"; // ✅ Add `.js` extension
+import User from "../models/user.js"; // Add `.js` extension
 import Messages from "../utilities/message.js";
 import APIResponse from "../utilities/apiresponse.js";
 import TokenHandler from "../utilities/tokengenerator.js";
@@ -19,7 +19,7 @@ export const verifyToken = async (req, res, next) => {
 
         const token = authHeader.split(" ")[1];
 
-        // ✅ Verify Token
+        // Verify Token
         const decoded = TokenHandler.verifyToken(token);
        
 
@@ -32,7 +32,7 @@ export const verifyToken = async (req, res, next) => {
             });
         }
 
-        // ✅ Fetch the user from the database
+        // Fetch the user from the database
         const user = await User.findById(decoded.id);
         if (!user) {
            
@@ -43,9 +43,9 @@ export const verifyToken = async (req, res, next) => {
             });
         }
 
-        // ✅ Attach `id` properly in `req.user`
+        // Attach `id` properly in `req.user`
         req.user = {
-            id: user._id.toString(), // ✅ Use `id` instead of `_id`
+            id: user._id.toString(), // Use `id` instead of `_id`
             role: user.role,
             username: user.username
         };
@@ -53,7 +53,7 @@ export const verifyToken = async (req, res, next) => {
        
         next();
     } catch (error) {
-        console.error("❌ Authentication Error:", error);
+        console.error(" Authentication Error:", error);
         return APIResponse.error(res, {
             status: 500,
             message: Messages.AUTH.AUTHENTICATION,

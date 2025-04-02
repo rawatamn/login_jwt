@@ -1,11 +1,11 @@
 import express from "express";
-import { createUser, deleteUser, getAllUsers, getLoggedInUser, getTotalRevenue, getUserCount, getUserRevenue, updateUser, } from "../controllers/userController.js"; // ✅ Add `.js`
-import verifyToken from "../middleware/authMiddleware.js"; // ✅ Add `.js`
+import { createUser, deleteUser, getAllUsers, getLoggedInUser, getTotalRevenue, getUserCount, getUserRevenue, updateUser, } from "../controllers/userController.js"; // Add `.js`
+import verifyToken from "../middleware/authMiddleware.js"; // Add `.js`
 import { API } from "../utilities/apiRoutes.js";
 
 const router = express.Router();
 
-// ✅ Define Routes
+// Define Routes
 router.get(API.ME, verifyToken, getLoggedInUser);
 router.get(API.ALL_USERS, verifyToken, getAllUsers);
 router.post(API.CREATE_USER, verifyToken, createUser);

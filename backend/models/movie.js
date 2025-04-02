@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { nanoid } from "nanoid"; // ✅ Import Nano ID
+import { nanoid } from "nanoid"; // Import Nano ID
 
 const movieSchema = new mongoose.Schema({
   _id: { 
     type: String, 
-    default: () => nanoid(24) // ✅ Generates a 24-character string ID
+    default: () => nanoid(24) // Generates a 24-character string ID
   },
   title: { type: String, required: true },
   overview: { type: String, required: true },

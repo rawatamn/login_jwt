@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
-import User from "../models/user.js"; // ✅ Add `.js` extension
+import User from "../models/user.js"; // Add `.js` extension
 import Messages from "../utilities/message.js";
 import APIResponse from "../utilities/apiresponse.js";
 import TokenHandler from "../utilities/tokengenerator.js";
 
-// ✅ Register Function
+// Register Function
 export const register = async (req, res) => {
     try {
         const { username, useremail, password, role } = req.body;
@@ -50,7 +50,7 @@ export const register = async (req, res) => {
     }
 };
 
-// ✅ Login Function
+// Login Function
 export const login = async (req, res) => {
     try {
         const { useremail, password } = req.body;
@@ -82,7 +82,7 @@ export const login = async (req, res) => {
             data: { 
                 token, 
                 username: user.username, 
-                role: user.role // ✅ Include role in response
+                role: user.role // Include role in response
             },
         });
     } catch (err) {

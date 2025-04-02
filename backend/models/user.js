@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { customAlphabet } from "nanoid";
 
-// ✅ Generate a default `userId` (10-character alphanumeric)
+// Generate a default `userId` (10-character alphanumeric)
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10);
 
 const userSchema = new mongoose.Schema(
@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
     userId: {
       type: String,
       unique: true,
-      default: () => nanoid(), // ✅ Auto-generate unique userId
+      default: () => nanoid(), // Auto-generate unique userId
     },
     username: {
       type: String,
@@ -31,12 +31,16 @@ const userSchema = new mongoose.Schema(
     },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // ✅ Reference to Superadmin who last updated
+      ref: "User", // Reference to Superadmin who last updated
       default: null,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false, // Soft delete flag
     },
   },
   {
-    timestamps: true, // ✅ Auto-generates createdAt & updatedAt
+    timestamps: true, // Auto-generates createdAt & updatedAt
   }
 );
 

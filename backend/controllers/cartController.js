@@ -1,7 +1,7 @@
 import * as cartService from "../services/cartService.js"
 import Messages from "../utilities/message.js";
 
-// ✅ Add Movie to Cart
+// Add Movie to Cart
 export const addToCart = async (req, res) => {
   try {
     const { userId, movieId, title, price, quantity } = req.body;
@@ -12,7 +12,7 @@ export const addToCart = async (req, res) => {
   }
 };
 
-// ✅ Initiate Payment
+// Initiate Payment
 export const initiatePayment = async (req, res) => {
   try {
     const { userId } = req.body;
@@ -23,7 +23,7 @@ export const initiatePayment = async (req, res) => {
   }
 };
 
-// ✅ Update Movie Quantity in Cart
+// Update Movie Quantity in Cart
 export const updateCart = async (req, res) => {
   try {
     const { userId, movieId } = req.params;
@@ -36,7 +36,7 @@ export const updateCart = async (req, res) => {
   }
 };
 
-// ✅ Get Cart Items
+// Get Cart Items
 export const getCart = async (req, res) => {
   try {
     const cart = await cartService.getCartByUserId(req.params.userId);
@@ -48,7 +48,7 @@ export const getCart = async (req, res) => {
   }
 };
 
-// ✅ Remove Movie from Cart
+// Remove Movie from Cart
 export const removeFromCart = async (req, res) => {
   try {
     const { userId, movieId } = req.params;
@@ -59,7 +59,7 @@ export const removeFromCart = async (req, res) => {
   }
 };
 
-// ✅ Confirm Payment
+// Confirm Payment
 export const confirmPayment = async (req, res) => {
   try {
     const { userId } = req.body;
@@ -67,27 +67,27 @@ export const confirmPayment = async (req, res) => {
 
     const order = await cartService.confirmPayment(userId);
 
-    console.log("✅ Payment confirmed, order created:", JSON.stringify(order, null, 2));
+    console.log("Payment confirmed, order created:", JSON.stringify(order, null, 2));
 
     res.status(200).json({ message: Messages.PAYMENT.CONFIRMED, order });
   } catch (error) {
-    console.error("❌ Error in confirmPayment:", error.message);
+    console.error(" Error in confirmPayment:", error.message);
     res.status(500).json({ message: error.message });
   }
 };
 
-// ✅ Get Successful Orders
+// Get Successful Orders
 export const getOrders = async (req, res) => {
   try {
-    console.log("🛠️ Fetching orders for user:", req.params.userId);
+    console.log(" Fetching orders for user:", req.params.userId);
 
     const orders = await cartService.getSuccessfulOrders(req.params.userId);
 
-    console.log("✅ Orders fetched from DB:", JSON.stringify(orders, null, 2));
+    console.log("Orders fetched from DB:", JSON.stringify(orders, null, 2));
 
     res.status(200).json(orders);
   } catch (error) {
-    console.error("❌ Error fetching orders:", error.message);
+    console.error(" Error fetching orders:", error.message);
     res.status(500).json({ message: error.message });
   }
 };

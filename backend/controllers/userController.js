@@ -1,6 +1,6 @@
-import {getLoggedInUsers,getAllUser,createUsers,updateUsers,deleteUsers,calculateTotalRevenues,countUser, getUserRevenueService} from "../services/userService.js"; // ✅ Add `.js` extension
+import {getLoggedInUsers,getAllUser,createUsers,updateUsers,deleteUsers,calculateTotalRevenues,countUser, getUserRevenueService} from "../services/userService.js"; // Add `.js` extension
 import Messages from "../utilities/message.js";
-// ✅ Fetch Logged-in User
+// Fetch Logged-in User
 export const getLoggedInUser = async (req, res) => {
   try {
     
@@ -16,12 +16,12 @@ export const getLoggedInUser = async (req, res) => {
    
     res.status(200).json(user);
   } catch (error) {
-    console.error("❌ Error fetching user details:", error);
+    console.error(" Error fetching user details:", error);
     res.status(500).json({ message: Messages.USER.USER_DETAIL, error });
   }
 };
 
-// ✅ Fetch All Users (Superadmin Only)
+// Fetch All Users (Superadmin Only)
 export const getAllUsers = async (req, res) => {
   try {
     if (req.user.role !== "superadmin") {
@@ -34,7 +34,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-// ✅ Create New User (Superadmin Only)
+// Create New User (Superadmin Only)
 export const createUser = async (req, res) => {
   try {
     if (req.user.role !== "superadmin") {
@@ -48,7 +48,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-// ✅ Update User (Superadmin Only)
+// Update User (Superadmin Only)
 export const updateUser = async (req, res) => {
   try {
    
@@ -74,12 +74,12 @@ export const updateUser = async (req, res) => {
     res.status(200).json({ message:Messages.USER.USER_UPDATE, formattedUser: result });
 
   } catch (error) {
-    console.error("❌ Error updating user:", error);
+    console.error(" Error updating user:", error);
     res.status(500).json({ message: Messages.USER.USER_NOT_UPDATE, error: error.message });
   }
 };
 
-// ✅ Delete User (Superadmin Only)
+// Delete User (Superadmin Only)
 export const deleteUser = async (req, res) => {
   try {
     if (req.user.role !== "superadmin") {
@@ -98,7 +98,7 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-// ✅ Get User Count
+// Get User Count
 export const getUserCount = async (req, res) => {
   try {
     const totalUsers = await countUser();
@@ -108,7 +108,7 @@ export const getUserCount = async (req, res) => {
   }
 };
 
-// ✅ Get Total Revenue
+// Get Total Revenue
 export const getTotalRevenue = async (req, res) => {
   try {
    
@@ -116,18 +116,18 @@ export const getTotalRevenue = async (req, res) => {
    
     res.status(200).json({ totalRevenue });
   } catch (error) {
-    console.error("❌ Error fetching total revenue:", error);
+    console.error(" Error fetching total revenue:", error);
     res.status(500).json({ message: Messages.Revenue.Total_Revenue, error: error.message });
   }
 };
 
-// ✅ Controller to get user revenue contribution
+// Controller to get user revenue contribution
 export const getUserRevenue = async (req, res) => {
   try {
     const revenueData = await getUserRevenueService();
     res.status(200).json(revenueData);
   } catch (error) {
-    console.error("❌ Error fetching user revenue:", error);
+    console.error(" Error fetching user revenue:", error);
     res.status(500).json({ message: "Failed to fetch user revenue" });
   }
 };

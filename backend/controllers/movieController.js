@@ -1,6 +1,6 @@
 import {countMovie, createMovies, deleteMovieByIds, getAllMovie, getMovieByIds, searchMovie, updateMovies} from "../services/movieService.js"
 import Messages from "../utilities/message.js";
-// ✅ Get All Movies
+// Get All Movies
 export const getAllMovies = async (req, res) => {
   try {
     const movies = await getAllMovie();
@@ -11,7 +11,7 @@ export const getAllMovies = async (req, res) => {
   }
 };
 
-// ✅ Search Movies by Title (Regex)
+// Search Movies by Title (Regex)
 export const searchMovies = async (req, res) => {
   try {
     const query = req.query.q;
@@ -32,7 +32,7 @@ export const searchMovies = async (req, res) => {
   }
 };
 
-// ✅ Get Movie by ID
+// Get Movie by ID
 export const getMovieById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -52,7 +52,7 @@ export const getMovieById = async (req, res) => {
   }
 };
 
-// ✅ Create a Movie
+// Create a Movie
 export const createMovie = async (req, res) => {
   try {
     const { title, overview, image, release_date, price, genre, rating } = req.body;
@@ -68,7 +68,7 @@ export const createMovie = async (req, res) => {
   }
 };
 
-// ✅ Update a Movie
+// Update a Movie
 export const updateMovie = async (req, res) => {
   try {
     const { id } = req.params;
@@ -84,7 +84,7 @@ export const updateMovie = async (req, res) => {
   }
 };
 
-// ✅ Delete a Movie
+// Delete a Movie
 export const deleteMovie = async (req, res) => {
   try {
     const { id } = req.params;
@@ -102,13 +102,13 @@ export const deleteMovie = async (req, res) => {
   }
 };
 
-// ✅ Count Movies
+// Count Movies
 export const createMovieCount = async (req, res) => {
   try {
-    const totalMovies = await countMovie(); // ✅ Use service function
+    const totalMovies = await countMovie(); // Use service function
     res.status(200).json({ totalMovies });
   } catch (error) {
-    console.error("❌ Error fetching movie count:", error);
+    console.error(" Error fetching movie count:", error);
     res.status(500).json({ message: Messages.MOVIE.MOVIE_COUNT_ERROR, error });
   }
 };

@@ -24,7 +24,7 @@ const Orders = () => {
         console.log("DATA",data)
         // console.log("🚀 API Raw Response:", JSON.stringify(data, null, 2));
 
-        // ✅ Ensure movies array exists in each order
+        // Ensure movies array exists in each order
         const processedOrders = data.map((order) => ({
           ...order,
           movies: order.movies || [], // Ensure movies array is always present
@@ -33,7 +33,7 @@ const Orders = () => {
         setOrders(processedOrders);
 
       } catch (error) {
-        console.error("❌ Error fetching orders:", error.response?.data || error.message);
+        console.error(" Error fetching orders:", error.response?.data || error.message);
       } finally {
         setLoading(false);
       }

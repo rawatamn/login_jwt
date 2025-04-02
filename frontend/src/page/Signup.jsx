@@ -4,15 +4,15 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { registerUser } from "../api/authApi";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // ✅ Import Eye Icons
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import Eye Icons
 import Loader from "../component/Loader";
-import { toast, ToastContainer } from "react-toastify"; // ✅ Import Toaster
-import "react-toastify/dist/ReactToastify.css"; // ✅ Toaster CSS
+import { toast, ToastContainer } from "react-toastify"; // Import Toaster
+import "react-toastify/dist/ReactToastify.css"; // Toaster CSS
 
 const Signup = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // ✅ Toggle Password Visibility
+  const [showPassword, setShowPassword] = useState(false); // Toggle Password Visibility
 
   const validationSchema = Yup.object({
     username: Yup.string().min(3, "Must be at least 3 characters").required("Required"),
@@ -26,12 +26,12 @@ const Signup = () => {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        await registerUser(values); // ✅ Call API function
-        toast.success("Signup Successful! 🎉"); // ✅ Show success toaster
-        setTimeout(() => navigate("/login"), 1500); // ✅ Redirect after toast
+        await registerUser(values); // Call API function
+        toast.success("Signup Successful! 🎉"); // Show success toaster
+        setTimeout(() => navigate("/login"), 1500); // Redirect after toast
       } catch (error) {
         console.error("Signup Error:", error);
-        toast.error(error.response?.data?.message || "Signup Failed! ❌"); // ✅ Show error toaster
+        toast.error(error.response?.data?.message || "Signup Failed! "); // Show error toaster
       }
       setLoading(false);
     },
@@ -39,7 +39,7 @@ const Signup = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500">
-      <ToastContainer position="top-right" autoClose={3000} /> {/* ✅ Toaster Container */}
+      <ToastContainer position="top-right" autoClose={3000} /> {/* Toaster Container */}
 
       <motion.div
         initial={{ opacity: 0, y: -30 }}
@@ -80,11 +80,11 @@ const Signup = () => {
           <div className="relative">
             <input
               {...formik.getFieldProps("password")}
-              type={showPassword ? "text" : "password"} // ✅ Toggle visibility
+              type={showPassword ? "text" : "password"} // Toggle visibility
               placeholder="Password"
               className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-lg focus:ring-2 focus:ring-white text-white placeholder-white transition-all duration-300"
             />
-            {/* ✅ Eye Toggle Button */}
+            {/* Eye Toggle Button */}
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}

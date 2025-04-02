@@ -1,9 +1,9 @@
 import axiosInstance from "../utils/axiosInstance";
 import { API } from "../utils/apiRoutes";
-import { localStorageUtils } from "../utils/localStorageUtils"; // ✅ Import local storage utils
-import { LocalStorageKeys } from "../constants/enums"; // ✅ Import enums
+import { localStorageUtils } from "../utils/localStorageUtils"; // Import local storage utils
+import { LocalStorageKeys } from "../constants/enums"; // Import enums
 
-// ✅ Fetch logged-in user details
+// Fetch logged-in user details
 export const fetchUser = async () => {
   try {
     const token = localStorageUtils.getItem(LocalStorageKeys.TOKEN);
@@ -15,12 +15,12 @@ export const fetchUser = async () => {
 
     return response.data;
   } catch (error) {
-    console.error("❌ Failed to fetch user data:", error.response?.data || error.message);
+    console.error(" Failed to fetch user data:", error.response?.data || error.message);
     throw error;
   }
 };
 
-// ✅ Fetch user data with token (used externally)
+// Fetch user data with token (used externally)
 export const getUserData = async (token) => {
   try {
     if (!token) throw new Error("Token is required to fetch user data.");
@@ -31,12 +31,12 @@ export const getUserData = async (token) => {
 
     return response.data;
   } catch (error) {
-    console.error("❌ Error fetching user data:", error.response?.data || error.message);
+    console.error(" Error fetching user data:", error.response?.data || error.message);
     throw error;
   }
 };
 
-// ✅ Search movies by query
+// Search movies by query
 export const searchMovies = async (query) => {
   try {
     if (!query.trim()) return [];
@@ -44,7 +44,7 @@ export const searchMovies = async (query) => {
     const response = await axiosInstance.get(`${API.MOVIES}${API.MOVIE_SEARCH}?q=${query}`);
     return response.data;
   } catch (error) {
-    console.error("❌ Error searching movies:", error.response?.data || error.message);
+    console.error(" Error searching movies:", error.response?.data || error.message);
     return [];
   }
 };

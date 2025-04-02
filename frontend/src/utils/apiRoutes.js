@@ -8,7 +8,7 @@ export const API = {
     USER_COUNT: "/count",
     TOTAL_REVENUE: "/total-revenue",
     USER_REVENUE:"/user-revenue",
-  
+   
     // Movie API Endpoints
     MOVIE_SEARCH: "/search",
     MOVIE_COUNT: "/moviecount",

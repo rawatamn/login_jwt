@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { deleteUser, fetchUsers, updateUser } from "../api/adminUserApi";
-import { toast, ToastContainer } from "react-toastify"; // ✅ Import Toaster
-import "react-toastify/dist/ReactToastify.css"; // ✅ Toaster CSS
+import { toast, ToastContainer } from "react-toastify"; // Import Toaster
+import "react-toastify/dist/ReactToastify.css"; // Toaster CSS
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -9,7 +9,7 @@ const UserList = () => {
   const [editUserId, setEditUserId] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({ username: "", useremail: "", role: "" });
-  const [isSaving, setIsSaving] = useState(false); // ✅ Track save process
+  const [isSaving, setIsSaving] = useState(false); // Track save process
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -27,62 +27,62 @@ const UserList = () => {
     loadUsers();
   }, []);
 
-  // ✅ Start Editing a User
+  // Start Editing a User
   const handleEdit = (user) => {
     setEditUserId(user._id);
     setFormData({ username: user.username, useremail: user.useremail, role: user.role });
     setErrorMessage("");
   };
 
-  // ✅ Handle Input Change
+  // Handle Input Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Check if form data has changed
+  // Check if form data has changed
   const isFormUnchanged =
     users.find(user => user._id === editUserId)?.username === formData.username &&
     users.find(user => user._id === editUserId)?.useremail === formData.useremail &&
     users.find(user => user._id === editUserId)?.role === formData.role;
 
-  // ✅ Save Updated User
+  // Save Updated User
   const handleSaveEdit = async () => {
     try {
       setIsSaving(true);
       setErrorMessage("");
-      await updateUser(editUserId, formData); // ✅ Perform the update request
+      await updateUser(editUserId, formData); // Perform the update request
 
-      // ✅ Fetch updated user list
+      // Fetch updated user list
       const updatedUsers = await fetchUsers();
       setUsers(updatedUsers);
-      setEditUserId(null); // ✅ Exit edit mode
+      setEditUserId(null); // Exit edit mode
       toast.success("User updated successfully! ✅");
     } catch (error) {
       setErrorMessage("Something went wrong. Please try again.");
-      toast.error("Failed to update user! ❌");
+      toast.error("Failed to update user! ");
     } finally {
       setIsSaving(false);
     }
   };
 
-  // ✅ Delete User with Confirmation
+  // Soft Delete User with Confirmation
   const handleDelete = async (userId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this user?");
     if (!confirmDelete) return;
 
     try {
-      await deleteUser(userId);
-      setUsers(users.filter(user => user._id !== userId));
-      toast.success("User deleted successfully! ✅");
+      await deleteUser(userId); // Mark the user as deleted
+      setUsers(users.map(user => user._id === userId ? { ...user, isDeleted: true } : user));
+      toast.success("User marked as deleted successfully! ✅");
     } catch (error) {
       setErrorMessage("Failed to delete user.");
-      toast.error("Error deleting user! ❌");
+      toast.error("Error deleting user! ");
     }
   };
 
   return (
     <div className="mt-6 p-5 bg-white shadow-md rounded-lg">
-      <ToastContainer position="top-right" autoClose={3000} /> {/* ✅ Toaster */}
+      <ToastContainer position="top-right" autoClose={3000} /> {/* Toaster */}
 
       <h2 className="text-xl font-bold mb-3">User List</h2>
 
@@ -100,6 +100,7 @@ const UserList = () => {
               <th className="border p-2">Username</th>
               <th className="border p-2">Email</th>
               <th className="border p-2">Role</th>
+              <th className="border p-2">Status</th>
               <th className="border p-2">Actions</th>
             </tr>
           </thead>
@@ -126,6 +127,13 @@ const UserList = () => {
                   ) : user.role}
                 </td>
                 <td className="border p-2">
+                  {user.isDeleted ? (
+                    <span className="text-red-500">Inactive</span>
+                  ) : (
+                    <span className="text-green-500">Active</span>
+                  )}
+                </td>
+                <td className="border p-2">
                   {editUserId === user._id ? (
                     <>
                       <button
@@ -142,7 +150,9 @@ const UserList = () => {
                   ) : (
                     <>
                       <button onClick={() => handleEdit(user)} className="bg-blue-500 text-white px-3 py-1 rounded mr-2">Edit</button>
-                      <button onClick={() => handleDelete(user._id)} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                      {!user.isDeleted && (
+                        <button onClick={() => handleDelete(user._id)} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                      )}
                     </>
                   )}
                 </td>

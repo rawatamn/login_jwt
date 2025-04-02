@@ -8,15 +8,15 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { localStorageUtils } from "../utils/localStorageUtils";
 import { LocalStorageKeys } from "../constants/enums";
 import Loader from "../component/Loader";
-import { toast, ToastContainer } from "react-toastify"; // ✅ Import Toast and ToastContainer
-import "react-toastify/dist/ReactToastify.css"; // ✅ Ensure Toastify CSS is imported
+import { toast, ToastContainer } from "react-toastify"; // Import Toast and ToastContainer
+import "react-toastify/dist/ReactToastify.css"; // Ensure Toastify CSS is imported
 
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // ✅ Validation Schema
+  // Validation Schema
   const validationSchema = Yup.object({
     useremail: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().min(6, "Must be at least 6 characters").required("Required"),
@@ -36,17 +36,17 @@ const Login = () => {
         const { token, role } = data.data;
         const decoded = JSON.parse(atob(token.split(".")[1]));
 
-        // ✅ Store user data in localStorage
+        // Store user data in localStorage
         localStorageUtils.setItem(LocalStorageKeys.TOKEN, token);
         localStorageUtils.setItem(LocalStorageKeys.USER_ROLE, role);
         localStorageUtils.setItem(LocalStorageKeys.USER_ID, decoded.id);
 
-        toast.success("Login Successful! 🎉"); // ✅ Show success toast
+        toast.success("Login Successful! 🎉"); // Show success toast
         setTimeout(() => navigate(role === "admin" ? "/admindashboard" : "/dashboard"), 1500);
       } catch (error) {
-        console.error("❌ Login Error:", error.response?.data?.message || "Login failed");
+        console.error(" Login Error:", error.response?.data?.message || "Login failed");
         setErrors({ general: error.response?.data?.message || "Login failed" });
-        toast.error(error.response?.data?.message || "Invalid credentials! ❌"); // ✅ Show error toast
+        toast.error(error.response?.data?.message || "Invalid credentials! "); // Show error toast
       }
       setLoading(false);
     },
@@ -54,7 +54,7 @@ const Login = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-      {/* ✅ Ensure ToastContainer is present */}
+      {/* Ensure ToastContainer is present */}
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar theme="colored" />
 
       <motion.div

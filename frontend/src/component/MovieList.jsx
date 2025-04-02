@@ -17,7 +17,7 @@ const MovieList = () => {
         const moviesData = await fetchMovies();
         setMovies(moviesData);
       } catch (error) {
-        toast.error("Error loading movies. ❌");
+        toast.error("Error loading movies. ");
       } finally {
         setLoading(false);
       }
@@ -32,7 +32,7 @@ const MovieList = () => {
       setMovies((prevMovies) => prevMovies.filter((movie) => movie._id !== id));
       toast.success("Movie deleted successfully! ✅");
     } catch (error) {
-      toast.error("Error deleting movie. ❌");
+      toast.error("Error deleting movie. ");
     }
   };
 

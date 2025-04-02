@@ -10,7 +10,7 @@ const RevenueList = () => {
         const data = await fetchUserRevenue();
         setRevenueData(data);
       } catch (error) {
-        console.error("❌ Error fetching revenue data:", error);
+        console.error(" Error fetching revenue data:", error);
       }
     };
 

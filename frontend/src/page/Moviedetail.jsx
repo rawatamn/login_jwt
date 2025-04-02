@@ -52,7 +52,7 @@ const Moviedetail = () => {
   if (error)
     return (
       <Typography textAlign="center" mt={5} fontSize="24px" color="red">
-        ❌ {error}
+         {error}
       </Typography>
     );
 
@@ -60,7 +60,7 @@ const Moviedetail = () => {
     <div>
       <Navbar />
 
-      {/* ✅ Background Blur Fix */}
+      {/* Background Blur Fix */}
       {movie.image && (
         <Box
           sx={{
@@ -84,21 +84,21 @@ const Moviedetail = () => {
           transition={{ duration: 0.6, ease: "easeOut" }}
           style={{
             display: "flex",
-            background: "rgba(0, 0, 0, 0.7)", // ✅ Better Contrast
+            background: "rgba(0, 0, 0, 0.7)", // Better Contrast
             borderRadius: "20px",
             boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
             overflow: "hidden",
             maxWidth: "900px",
             width: "100%",
-            color: "white", // ✅ Ensure text is visible
+            color: "white", // Ensure text is visible
           }}
         >
-          {/* ✅ Movie Poster */}
+          {/* Movie Poster */}
           <Box width="40%">
             <img src={movie.image} alt={movie.title} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "20px 0 0 20px" }} />
           </Box>
 
-          {/* ✅ Movie Details */}
+          {/* Movie Details */}
           <Box width="60%" p={4} textAlign="left">
             <Typography variant="h3" fontWeight="bold">{movie.title}</Typography>
             <Typography variant="body1" sx={{ mt: 2, opacity: 0.9 }}>{movie.overview || "No description available."}</Typography>
@@ -106,10 +106,10 @@ const Moviedetail = () => {
             <Typography variant="h6" sx={{ mt: 1, color: "#f4d03f" }}>⭐ Rating: {movie.rating}/10</Typography>
             <Typography variant="h5" sx={{ mt: 3, fontWeight: "bold", color: "#ff4757" }}>💰 Price: ₹{movie.price || "Not Available"}</Typography>
 
-            {/* ✅ Cart Success Message */}
-            {cartMessage && <Typography variant="body1" sx={{ color: "lightgreen", mt: 2 }}>✅ {cartMessage}</Typography>}
+            {/* Cart Success Message */}
+            {cartMessage && <Typography variant="body1" sx={{ color: "lightgreen", mt: 2 }}>{cartMessage}</Typography>}
 
-            {/* ✅ Buttons */}
+            {/* Buttons */}
             <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
             {new Date(movie.release_date) <= new Date() && (
   <Button

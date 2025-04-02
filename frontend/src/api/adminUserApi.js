@@ -6,29 +6,38 @@ export const fetchUsers = async () => {
     const response = await axiosInstance.get(API.USERS);
     return response.data;
   } catch (error) {
-    console.error("❌ Error fetching users:", error.response?.data || error.message);
+    console.error(" Error fetching users:", error.response?.data || error.message);
     throw error;
   }
 };
 
-// 🗑️ Delete a User
+
 export const deleteUser = async (userId) => {
   try {
-    const response = await axiosInstance.delete(`${API.USERS}/${userId}`);
+    // Log the userId to ensure the correct one is being used
+    console.log('Deleting user with userId:', userId);
+
+    const url = `${API.USERS}/${userId}`
+    const response = await axiosInstance.delete(url);
     return response.data;
   } catch (error) {
-    console.error("❌ Error deleting user:", error.response?.data || error.message);
+    console.error("Error deleting user:", error.response?.data || error.message);
     throw error;
   }
 };
 
-// ✏️ Update a User
+
+
+
+
+
+//  Update a User
 export const updateUser = async (userId, updatedData) => {
   try {
     const response = await axiosInstance.put(`${API.USERS}/${userId}`, updatedData);
     return response.data;
   } catch (error) {
-    console.error("❌ Error updating user:", error.response?.data || error.message);
+    console.error(" Error updating user:", error.response?.data || error.message);
     throw error;
   }
 };

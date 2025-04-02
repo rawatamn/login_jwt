@@ -13,7 +13,7 @@ export const localStorageUtils = {
   getItem: (key) => {
     try {
       const data = localStorage.getItem(key);
-      // ✅ Check if data is valid JSON before parsing
+      // Check if data is valid JSON before parsing
       if (data && (data.startsWith("{") || data.startsWith("["))) {
         return JSON.parse(data);
       }

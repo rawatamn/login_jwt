@@ -6,7 +6,7 @@ export const fetchMovies = async () => {
     const response = await axiosInstance.get(API.MOVIES);
     return response.data;
   } catch (error) {
-    console.error("❌ Error fetching movies:", error.response?.data || error.message);
+    console.error(" Error fetching movies:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -17,7 +17,7 @@ export const deleteMovie = async (movieId) => {
     const response = await axiosInstance.delete(`${API.MOVIES}/${movieId}`);
     return response.data;
   } catch (error) {
-    console.error("❌ Error deleting movie:", error.response?.data || error.message);
+    console.error(" Error deleting movie:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -28,7 +28,7 @@ export const updateMovie = async (movieId, updatedData) => {
     const response = await axiosInstance.put(`${API.MOVIES}/${movieId}`, updatedData);
     return response.data;
   } catch (error) {
-    console.error("❌ Error updating movie:", error.response?.data || error.message);
+    console.error(" Error updating movie:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -39,7 +39,7 @@ export const addMovie = async (movieData) => {
     const response = await axiosInstance.post(API.MOVIES, movieData);
     return response.data;
   } catch (error) {
-    console.error("❌ Error adding movie:", error.response?.data || error.message);
+    console.error(" Error adding movie:", error.response?.data || error.message);
     throw error;
   }
 };

@@ -12,12 +12,12 @@ const AddMovie = ({ setMovies, setShowAddMovie, editMovie }) => {
     rating: "",
   });
 
-  // ✅ Prefill form when editing
+  // Prefill form when editing
   useEffect(() => {
     if (editMovie) {
       setFormData(editMovie);
     } else {
-      resetForm(); // ✅ Reset form when adding a new movie
+      resetForm(); // Reset form when adding a new movie
     }
   }, [editMovie]);
 
@@ -25,7 +25,7 @@ const AddMovie = ({ setMovies, setShowAddMovie, editMovie }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Function to reset form fields
+  // Function to reset form fields
   const resetForm = () => {
     setFormData({
       title: "",
@@ -38,7 +38,7 @@ const AddMovie = ({ setMovies, setShowAddMovie, editMovie }) => {
     });
   };
 
-  // ✅ Handle form submission
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -49,14 +49,14 @@ const AddMovie = ({ setMovies, setShowAddMovie, editMovie }) => {
         );
       } else {
         await addMovie(formData);
-        const updatedMovies = await fetchMovies(); // ✅ Fetch updated movies
+        const updatedMovies = await fetchMovies(); // Fetch updated movies
         setMovies(updatedMovies);
       }
 
-      resetForm(); // ✅ Clear the form
-      setShowAddMovie(false); // ✅ Close the form dropdown
+      resetForm(); // Clear the form
+      setShowAddMovie(false); // Close the form dropdown
     } catch (error) {
-      console.error("❌ Error saving movie:", error);
+      console.error(" Error saving movie:", error);
     }
   };
 

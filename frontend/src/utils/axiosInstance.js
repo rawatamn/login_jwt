@@ -4,7 +4,7 @@ import { LocalStorageKeys } from "../constants/enums";
 
 const api_url = import.meta.env.VITE_BACKEND_URL
 
-// ✅ Create an Axios instance
+// Create an Axios instance
 const axiosInstance = axios.create({
   baseURL: api_url,
   headers: {
@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
   },
 });
 
-// ✅ Intercept requests and add Authorization token
+// Intercept requests and add Authorization token
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorageUtils.getItem(LocalStorageKeys.TOKEN);
@@ -24,13 +24,13 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ Intercept responses to handle errors globally
+// Intercept responses to handle errors globally
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("❌ API Error:", error.response?.data || error.message);
+    console.error(" API Error:", error.response?.data || error.message);
 
-    // ✅ If token expired or unauthorized, clear storage & redirect to login
+    // If token expired or unauthorized, clear storage & redirect to login
     if (error.response?.status === 401) {
       console.warn("⚠️ Unauthorized! Clearing session & redirecting...");
       localStorageUtils.clearStorage();

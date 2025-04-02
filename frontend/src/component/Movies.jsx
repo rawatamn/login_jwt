@@ -6,7 +6,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { fetchMovies } from "../api/movieApi"; // ✅ Import centralized API function
+import { fetchMovies } from "../api/movieApi"; // Import centralized API function
 
 const MoviesCarousel = () => {
   const [movies, setMovies] = useState([]);
@@ -16,12 +16,12 @@ const MoviesCarousel = () => {
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const data = await fetchMovies(); // ✅ Fetch movies via API function
-        const today = new Date().toISOString().split("T")[0]; // ✅ Get today's date in YYYY-MM-DD format
-        const filteredMovies = data.filter(movie => movie.release_date <= today); // ✅ Exclude future movies
+        const data = await fetchMovies(); // Fetch movies via API function
+        const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+        const filteredMovies = data.filter(movie => movie.release_date <= today); // Exclude future movies
         setMovies(filteredMovies);
       } catch (error) {
-        console.error("❌ Error loading movies:", error);
+        console.error(" Error loading movies:", error);
       }
       setLoading(false);
     };

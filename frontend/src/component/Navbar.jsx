@@ -18,7 +18,7 @@ const Navbar = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cart, removeFromCart } = useContext(CartContext);
 
-  // ✅ Fetch username from LocalStorage
+  // Fetch username from LocalStorage
   useEffect(() => {
     const storedUsername = localStorageUtils.getItem(LocalStorageKeys.USERNAME);
     if (storedUsername) {
@@ -26,7 +26,7 @@ const Navbar = () => {
     }
   }, []);
 
-  // ✅ Fetch Movies based on search query
+  // Fetch Movies based on search query
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredMovies([]);
@@ -39,7 +39,7 @@ const Navbar = () => {
         const movies = await searchMovies(searchQuery);
         setFilteredMovies(movies);
       } catch (error) {
-        toast.error("❌ Error searching movies!");
+        toast.error(" Error searching movies!");
       } finally {
         setLoading(false);
       }
@@ -49,16 +49,16 @@ const Navbar = () => {
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
-  // ✅ Handle Movie Selection (Redirect)
+  // Handle Movie Selection (Redirect)
   const handleMovieSelect = (movieId) => {
     setSearchQuery("");
     setFilteredMovies([]);
     navigate(`/movies/${movieId}`);
   };
 
-  // ✅ Handle Logout
+  // Handle Logout
   const handleLogout = () => {
-    toast.success("✅ Logged out successfully!", {
+    toast.success("Logged out successfully!", {
       onClose: () => {
         localStorageUtils.clearStorage();
         navigate("/login");
@@ -70,7 +70,7 @@ const Navbar = () => {
     <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md relative">
       <ToastContainer position="top-right" autoClose={2000} />
       
-      {/* ✅ Logo */}
+      {/* Logo */}
       <motion.span
         whileHover={{ scale: 1.1 }}
         className="text-3xl font-bold cursor-pointer"
@@ -79,7 +79,7 @@ const Navbar = () => {
         book<span className="text-red-500">my</span>show
       </motion.span>
 
-      {/* ✅ Search Bar */}
+      {/* Search Bar */}
       <div className="relative w-1/3">
         <div className="flex items-center bg-gray-200 px-3 py-2 rounded-lg w-full">
           <FaSearch className="text-gray-500 mr-2" />
@@ -92,7 +92,7 @@ const Navbar = () => {
           />
         </div>
 
-        {/* ✅ Search Suggestions Dropdown */}
+        {/* Search Suggestions Dropdown */}
         {searchQuery && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -118,9 +118,9 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* ✅ User Info + Cart + Order History */}
+      {/* User Info + Cart + Order History */}
       <div className="flex items-center space-x-6">
-        {/* ✅ Order History Icon */}
+        {/* Order History Icon */}
         <motion.div
           whileHover={{ scale: 1.1 }}
           className="relative cursor-pointer"
@@ -129,7 +129,7 @@ const Navbar = () => {
           <FaHistory className="text-gray-700 text-2xl" title="Order History" />
         </motion.div>
 
-        {/* ✅ Cart Icon */}
+        {/* Cart Icon */}
         <motion.div
           whileHover={{ scale: 1.1 }}
           className="relative cursor-pointer"
@@ -143,7 +143,7 @@ const Navbar = () => {
           )}
         </motion.div>
 
-        {/* ✅ Logout or Sign In */}
+        {/* Logout or Sign In */}
         {username ? (
           <div className="flex items-center space-x-3">
             <span className="font-medium">Hey, {username}</span>
@@ -164,7 +164,7 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* ✅ Cart Popup */}
+      {/* Cart Popup */}
       {isCartOpen && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -201,7 +201,7 @@ const Navbar = () => {
             <p className="text-center text-gray-500">Your cart is empty</p>
           )}
 
-          {/* ✅ "Proceed to Payment" Button */}
+          {/* "Proceed to Payment" Button */}
           {cart.length > 0 && (
             <button
               className="bg-green-500 text-white w-full py-2 mt-4 rounded-lg font-bold"

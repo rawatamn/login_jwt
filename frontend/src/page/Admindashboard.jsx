@@ -7,8 +7,8 @@ import RevenueList from "../component/RevenueList";
 import { fetchMovieCount, fetchTotalRevenue, fetchUserCount } from "../api/adminApi";
 import { localStorageUtils } from "../utils/localStorageUtils";
 import { LocalStorageKeys } from "../constants/enums";
-import { toast, ToastContainer } from "react-toastify"; // ✅ Import Toaster
-import "react-toastify/dist/ReactToastify.css"; // ✅ Toaster CSS
+import { toast, ToastContainer } from "react-toastify"; // Import Toaster
+import "react-toastify/dist/ReactToastify.css"; // Toaster CSS
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -21,11 +21,11 @@ const AdminDashboard = () => {
       try {
         const token = localStorageUtils.getItem(LocalStorageKeys.TOKEN);
         if (!token) {
-          navigate("/login"); // ✅ Redirect if no token
+          navigate("/login"); // Redirect if no token
           return;
         }
 
-        // ✅ Fetch Stats using API
+        // Fetch Stats using API
         const [totalUsers, totalMovies, totalRevenue] = await Promise.all([
           fetchUserCount(),
           fetchMovieCount(),
@@ -35,23 +35,23 @@ const AdminDashboard = () => {
         setStats({ totalUsers, totalMovies, totalRevenue });
       } catch (error) {
         console.error(error);
-        toast.error("Failed to fetch dashboard stats! ❌"); // ✅ Show error toaster
+        toast.error("Failed to fetch dashboard stats! "); // Show error toaster
       }
     };
 
     loadStats();
   }, []);
 
-  // ✅ Logout Function
+  // Logout Function
   const handleLogout = () => {
-    localStorageUtils.clearStorage(); // ✅ Clears all stored user data
-    toast.success("Logout successful! 🎉"); // ✅ Show success toaster
-    setTimeout(() => navigate("/login"), 1500); // ✅ Redirect after toast
+    localStorageUtils.clearStorage(); // Clears all stored user data
+    toast.success("Logout successful! 🎉"); // Show success toaster
+    setTimeout(() => navigate("/login"), 1500); // Redirect after toast
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <ToastContainer position="top-right" autoClose={3000} /> {/* ✅ Toaster Container */}
+      <ToastContainer position="top-right" autoClose={3000} /> {/* Toaster Container */}
 
       {/* Sidebar */}
       <aside className={`bg-gray-800 text-white h-full transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-20"}`}>

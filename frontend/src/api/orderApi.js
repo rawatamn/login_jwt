@@ -1,4 +1,4 @@
-import axiosInstance from "../utils/axiosInstance"; // ✅ Use centralized axios instance
+import axiosInstance from "../utils/axiosInstance"; // Use centralized axios instance
 import { API } from "../utils/apiRoutes";
 export const fetchUserOrders = async (userId) => {
   try {
@@ -8,10 +8,10 @@ export const fetchUserOrders = async (userId) => {
       console.log("📡 Fetching orders for user:", userId);
       const response = await axiosInstance.get(apiUrl);
       
-      console.log("✅ Fetched Orders:", response.data);
+      console.log("Fetched Orders:", response.data);
       return response.data;
   } catch (error) {
-      console.error("❌ API Error:", error.response?.data || error.message);
+      console.error(" API Error:", error.response?.data || error.message);
       return [];
   }
 };

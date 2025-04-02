@@ -6,7 +6,7 @@ export const loginUser = async (credentials) => {
     const response = await axiosInstance.post(`${API.AUTH}${API.AUTH_LOGIN}`, credentials);
     return response.data;
   } catch (error) {
-    console.error("❌ Login Error:", error.response?.data || error.message);
+    console.error(" Login Error:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -19,7 +19,7 @@ export const registerUser = async (userData) => {
       });
       return response.data;
     } catch (error) {
-      console.error("❌ Signup failed:", error.response?.data || error.message);
+      console.error(" Signup failed:", error.response?.data || error.message);
       throw error;
     }
   };

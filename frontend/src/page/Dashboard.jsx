@@ -42,7 +42,7 @@ const Dashboard = () => {
         const moviesData = await fetchMovies();
         setMovies(moviesData);
       } catch (error) {
-        toast.error("Error fetching movies! ❌");
+        toast.error("Error fetching movies! ");
       } finally {
         setLoading(false);
       }
@@ -53,7 +53,7 @@ const Dashboard = () => {
   }, [navigate]);
 
   if (loading) return <Loader />;
-  if (!user) return <h1 className="text-center mt-10 text-red-500">❌ Error: User data not found</h1>;
+  if (!user) return <h1 className="text-center mt-10 text-red-500"> Error: User data not found</h1>;
 
   const today = new Date().toISOString().split("T")[0];
   const upcomingMovies = movies.filter(movie => movie.release_date > today);
@@ -65,7 +65,7 @@ const Dashboard = () => {
       <Corousel />
       <Movies />
       
-      {/* ✅ Upcoming Movies Section */}
+      {/* Upcoming Movies Section */}
       {upcomingMovies.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}

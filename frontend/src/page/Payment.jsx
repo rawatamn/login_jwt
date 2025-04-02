@@ -14,10 +14,10 @@ const Payment = () => {
   const [paymentStatus, setPaymentStatus] = useState("pending");
   const [loading, setLoading] = useState(false);
 
-  // ✅ Calculate Total Price
+  // Calculate Total Price
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // ✅ Initiate Payment on Page Load
+  // Initiate Payment on Page Load
   useEffect(() => {
     const loadPaymentStatus = async () => {
       try {
@@ -25,30 +25,30 @@ const Payment = () => {
         const status = await initiatePayment(userId);
         setPaymentStatus(status);
       } catch (error) {
-        toast.error("❌ Payment initiation failed!");
+        toast.error(" Payment initiation failed!");
       }
     };
 
     loadPaymentStatus();
   }, []);
 
-  // ✅ Handle Payment Completion
+  // Handle Payment Completion
   const handlePayment = async () => {
     try {
       setLoading(true);
       const userId = localStorage.getItem("userId");
       await confirmPayment(userId);
 
-      toast.success("✅ Payment Successful! 🎉");
+      toast.success("Payment Successful! 🎉");
 
-      // ✅ Clear Cart after Payment
+      // Clear Cart after Payment
       setCart([]);
       localStorage.removeItem("cart");
 
-      // ✅ Redirect to Dashboard after 2 seconds
+      // Redirect to Dashboard after 2 seconds
       setTimeout(() => navigate("/dashboard"), 2000);
     } catch (error) {
-      toast.error(error.message || "❌ Payment failed!");
+      toast.error(error.message || " Payment failed!");
     } finally {
       setLoading(false);
     }
@@ -84,7 +84,7 @@ const Payment = () => {
         <p className="text-center text-gray-500">Your cart is empty</p>
       )}
 
-      {/* ✅ Show Payment Status */}
+      {/* Show Payment Status */}
       <div className="text-lg font-semibold mt-4 flex justify-between">
         <span>Status:</span>
         <span className={`font-bold ${paymentStatus === "successful" ? "text-green-600" : "text-yellow-600"}`}>
@@ -92,13 +92,13 @@ const Payment = () => {
         </span>
       </div>
 
-      {/* ✅ Total Price */}
+      {/* Total Price */}
       <div className="text-lg font-semibold mt-4 flex justify-between">
         <span>Total:</span>
         <span>₹{totalPrice}</span>
       </div>
 
-      {/* ✅ Proceed Button */}
+      {/* Proceed Button */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
